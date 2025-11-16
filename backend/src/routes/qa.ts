@@ -84,6 +84,12 @@ qaRouter.post('/diag/bootstrap', async (req, res) => {
       state: 'MI',
       latitude: 42.3314,
       longitude: -83.0458,
+      brand: {
+        connectOrCreate: {
+          where: { slug: 'jars' },
+          create: { name: 'JARS', slug: 'jars' },
+        },
+      },
     },
   });
 

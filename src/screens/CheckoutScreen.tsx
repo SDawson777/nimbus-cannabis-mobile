@@ -73,8 +73,30 @@ export default function CheckoutScreen() {
     },
     onError: err => {
       hapticHeavy();
-      const msg = err?.response?.data?.error || 'Order failed';
-      setApiError(msg);
+      console.log('Order error:', err?.response?.data);
+
+      // Handle compliance violations with specific messaging
+      if (err?.response?.data?.error === 'compliance_violation') {
+        const violations = err.response.data.violations || [];
+        const complianceMessages = violations.map((v: any) => {
+          switch (v.code) {
+            case 'AGE_NOT_VERIFIED':
+              return 'Please verify your age to complete this purchase.';
+            case 'UNDERAGE':
+              return `You must be at least ${v.message.match(/\d+/)?.[0] || 21} years old to make a purchase.`;
+            case 'DAILY_THC_LIMIT_EXCEEDED':
+              return v.message || 'This order would exceed your daily THC limit.';
+            case 'DATE_OF_BIRTH_MISSING':
+              return 'Please provide your date of birth for age verification.';
+            default:
+              return v.message || 'Compliance check failed.';
+          }
+        });
+        setApiError(complianceMessages.join(' '));
+      } else {
+        const msg = err?.response?.data?.message || err?.response?.data?.error || 'Order failed';
+        setApiError(msg);
+      }
     },
   });
 

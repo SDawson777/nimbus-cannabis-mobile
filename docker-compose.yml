@@ -1,0 +1,111 @@
+# Docker Compose for JARS Cannabis Mobile App
+# One-click deployment: docker-compose up
+
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: jars-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-jars}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-jars123}
+      POSTGRES_DB: ${POSTGRES_DB:-jars_dev}
+    ports:
+      - '${POSTGRES_PORT:-5432}:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/init-db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - jars-network
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-jars} -d ${POSTGRES_DB:-jars_dev}']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis for caching and future queue management
+  redis:
+    image: redis:7-alpine
+    container_name: jars-redis
+    restart: unless-stopped
+    ports:
+      - '${REDIS_PORT:-6379}:6379'
+    volumes:
+      - redis_data:/data
+    networks:
+      - jars-network
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    command: redis-server --appendonly yes
+
+  # JARS Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: jars-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: 3000
+
+      # Database Configuration
+      DATABASE_URL: postgresql://${POSTGRES_USER:-jars}:${POSTGRES_PASSWORD:-jars123}@db:5432/${POSTGRES_DB:-jars_dev}?schema=public
+      DIRECT_DATABASE_URL: postgresql://${POSTGRES_USER:-jars}:${POSTGRES_PASSWORD:-jars123}@db:5432/${POSTGRES_DB:-jars_dev}?schema=public
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+
+      # Redis Configuration
+      REDIS_URL: redis://redis:6379
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
+      # Application Configuration
+      JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
+      BCRYPT_ROUNDS: ${BCRYPT_ROUNDS:-10}
+
+      # Stripe Configuration (optional - for payment processing)
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY:-}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+
+      # External APIs
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+
+      # Deployment Configuration
+      SEED_DATABASE: ${SEED_DATABASE:-true}
+      DEBUG: ${DEBUG:-false}
+
+    ports:
+      - '${BACKEND_PORT:-3000}:3000'
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - jars-network
+    volumes:
+      - ./backend/uploads:/app/uploads
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -f http://localhost:3000/api/v1/health || exit 1']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  jars-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local

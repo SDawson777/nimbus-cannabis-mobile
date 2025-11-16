@@ -32,6 +32,25 @@ A premium React Native mobile app for Jars Cannabis, designed to deliver an awar
 - Age gating, geofencing, and full legal compliance
 - Award-winning user experience with advanced haptics, animations, and accessibility
 
+## 🚀 One-Click Deployment
+
+Get the complete backend running with Docker Compose:
+
+```bash
+# Clone repository
+git clone https://github.com/SDawson777/jars-cannabis-mobile-app.git
+cd jars-cannabis-mobile-app
+
+# Configure environment
+cp .env.docker.example .env
+
+# Start everything (PostgreSQL + Redis + Backend API)
+docker-compose up
+```
+
+**Backend available at**: `http://localhost:3000`  
+**Full instructions**: See [DEPLOYMENT.md](DEPLOYMENT.md)
+
 JARS Cannabis Mobile App
 
 A complete, premium mobile commerce solution for cannabis retail—Expo/React Native front-end with a modern Express/TypeScript backend.All core e-commerce, user, and content features built in.Production-ready. Easy to deploy. Handover ready.
@@ -159,6 +178,25 @@ yarn run ios      # iOS simulator
 yarn run android  # Android emulator (requires Android SDK setup)
 yarn run web      # Web browser
 ```
+
+## 🎭 Demo Mode (One-Click Testing)
+
+For immediate testing with realistic fake data:
+
+```bash
+# 1. Start backend with Docker (includes database)
+docker-compose up -d
+
+# 2. Populate comprehensive demo data
+docker-compose exec backend npm run seed:demo
+
+# 3. Start mobile app with demo backend
+EXPO_PUBLIC_API_URL=http://localhost:3000 npx expo start
+```
+
+**Demo Credentials**: `demo+user@example.com` / `demo123`
+
+See [DEPLOYMENT.md](DEPLOYMENT.md#demo-mode) for full demo documentation.
 
 🌐 Backend Deployment (Cloud)
 

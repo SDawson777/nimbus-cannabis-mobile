@@ -21,6 +21,7 @@ import {
 
 import { ThemeContext } from '../context/ThemeContext';
 import { useConcierge } from '../hooks/useConcierge';
+import { useAiBudtender } from '../hooks/useAI';
 import type { RootStackParamList } from '../navigation/types';
 import { hapticLight, hapticMedium } from '../utils/haptic';
 
@@ -44,6 +45,7 @@ export default function ConciergeChatScreen() {
   const navigation = useNavigation<ChatNavProp>();
   const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
   const { messages, loading, sendMessage, retryMessage } = useConcierge();
+  const aiBudtenderMutation = useAiBudtender();
 
   const bgColor =
     colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
@@ -110,6 +112,29 @@ export default function ConciergeChatScreen() {
     hapticLight();
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     navigation.goBack();
+  };
+
+  const handleQuickPrompt = async (prompt: string) => {
+    hapticMedium();
+
+    try {
+      const _response = await aiBudtenderMutation.mutateAsync({
+        message: prompt,
+        userId: 'user123', // In a real app, this would come from auth
+      });
+
+      // Add the user message to the chat
+      setInput('');
+
+      // Add both user message and AI response to regular chat
+      // This integrates with the existing concierge system
+      await sendMessage(prompt);
+
+      // Note: The AI response from the budtender could be integrated here
+      // For now, it uses the existing concierge flow
+    } catch (_error) {
+      showToast('AI Budtender is temporarily unavailable. Try typing your question instead.');
+    }
   };
 
   return (
@@ -182,6 +207,39 @@ export default function ConciergeChatScreen() {
         {loading && (
           <Text style={[styles.statusText, { color: jarsSecondary }]}>Bot is typing...</Text>
         )}
+
+        {/* AI Budtender Quick Prompts */}
+        <View style={styles.quickPromptsContainer}>
+          <Text style={[styles.quickPromptsTitle, { color: jarsPrimary }]}>
+            Quick AI Budtender Questions
+          </Text>
+          <View style={styles.quickPromptsGrid}>
+            <Pressable
+              style={[styles.quickPromptButton, { backgroundColor: jarsSecondary }]}
+              onPress={() => handleQuickPrompt('Recommend something for sleep')}
+            >
+              <Text style={[styles.quickPromptText, { color: jarsPrimary }]}>💤 Sleep Help</Text>
+            </Pressable>
+            <Pressable
+              style={[styles.quickPromptButton, { backgroundColor: jarsSecondary }]}
+              onPress={() => handleQuickPrompt("I'm new to cannabis, where do I start?")}
+            >
+              <Text style={[styles.quickPromptText, { color: jarsPrimary }]}>🌱 Beginner</Text>
+            </Pressable>
+            <Pressable
+              style={[styles.quickPromptButton, { backgroundColor: jarsSecondary }]}
+              onPress={() => handleQuickPrompt('What helps with stress and anxiety?')}
+            >
+              <Text style={[styles.quickPromptText, { color: jarsPrimary }]}>😌 Stress Relief</Text>
+            </Pressable>
+            <Pressable
+              style={[styles.quickPromptButton, { backgroundColor: jarsSecondary }]}
+              onPress={() => handleQuickPrompt('Something for energy and focus?')}
+            >
+              <Text style={[styles.quickPromptText, { color: jarsPrimary }]}>⚡ Energy</Text>
+            </Pressable>
+          </View>
+        </View>
 
         {/* Input */}
         <View
@@ -276,5 +334,33 @@ const styles = StyleSheet.create({
     marginLeft: 4,
     fontSize: 14,
     fontWeight: '500',
+  },
+  quickPromptsContainer: {
+    padding: 16,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#E0E0E0',
+  },
+  quickPromptsTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 12,
+  },
+  quickPromptsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  quickPromptButton: {
+    width: '48%',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 8,
+    alignItems: 'center',
+  },
+  quickPromptText: {
+    fontSize: 14,
+    fontWeight: '500',
+    textAlign: 'center',
   },
 });

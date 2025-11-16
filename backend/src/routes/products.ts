@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { prisma } from '../prismaClient';
 import { requireAuth } from '../middleware/auth';
+import { cacheService } from '../services/cacheService';
 
 export const productsRouter = Router();
 
@@ -21,6 +22,15 @@ productsRouter.get('/products', async (req, res) => {
     page = '1',
     limit = '24',
   } = req.query as Record<string, string>;
+
+  // Create cache key from query parameters
+  const cacheKey = `products:${JSON.stringify(req.query)}`;
+
+  // Try to get from cache first
+  const cached = await cacheService.get(cacheKey);
+  if (cached) {
+    return res.json(cached);
+  }
 
   const where: any = {};
   if (q)
@@ -78,8 +88,15 @@ productsRouter.get('/products', async (req, res) => {
     });
   }
 
-  const pagination = { page: parseInt(page as any), limit: take, total: items.length };
-  res.json({ products: items, pagination });
+  const result = {
+    products: items,
+    pagination: { page: parseInt(page as any), limit: take, total: items.length },
+  };
+
+  // Cache the result for 5 minutes
+  await cacheService.set(cacheKey, result, 300);
+
+  res.json(result);
 });
 
 // note: product-by-id route is defined after specific routes (slug/categories/featured) to avoid param collisions

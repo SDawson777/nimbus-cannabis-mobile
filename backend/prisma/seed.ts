@@ -2,13 +2,27 @@ import { PrismaClient, ContentType, ProductCategory, StrainType } from '@prisma/
 const prisma = new PrismaClient();
 
 async function main() {
+  // Create default JARS brand
+  const jarsBrand = await prisma.brand.upsert({
+    where: { slug: 'jars' },
+    update: {},
+    create: {
+      name: 'JARS Cannabis',
+      slug: 'jars',
+      primaryColor: '#16A34A', // Green from existing theme
+      secondaryColor: '#15803D', // Darker green
+      logoUrl: null, // Can be updated later
+    },
+  });
+
   // Stores
   const s1 = await prisma.store.upsert({
     where: { slug: 'scottsdale' },
-    update: {},
+    update: { brandId: jarsBrand.id },
     create: {
       name: 'JARS Scottsdale',
       slug: 'scottsdale',
+      brandId: jarsBrand.id,
       city: 'Scottsdale',
       state: 'AZ',
       latitude: 33.4942,
@@ -19,10 +33,11 @@ async function main() {
 
   const s2 = await prisma.store.upsert({
     where: { slug: 'detroit' },
-    update: {},
+    update: { brandId: jarsBrand.id },
     create: {
       name: 'JARS Detroit',
       slug: 'detroit',
+      brandId: jarsBrand.id,
       city: 'Detroit',
       state: 'MI',
       latitude: 42.3314,
@@ -43,6 +58,7 @@ async function main() {
       strainType: StrainType.Sativa,
       defaultPrice: 30,
       thcPercent: 22.5,
+      thcMgPerUnit: 787.5, // 3.5g * 22.5% = 787.5mg THC per eighth
       variants: {
         create: [
           { name: '3.5g', sku: 'BD-35', price: 30 },
@@ -84,6 +100,40 @@ async function main() {
       slug: 'general',
       title: 'FAQ',
       body: 'Frequently asked questions...',
+    },
+  });
+
+  // Compliance Rules
+  await prisma.complianceRule.upsert({
+    where: { stateCode: 'MI' },
+    update: {},
+    create: {
+      stateCode: 'MI',
+      maxDailyTHCMg: 2500, // Michigan: 2.5g THC per day
+      mustVerifyAge: true,
+      minAge: 21,
+    },
+  });
+
+  await prisma.complianceRule.upsert({
+    where: { stateCode: 'AZ' },
+    update: {},
+    create: {
+      stateCode: 'AZ',
+      maxDailyTHCMg: 1000, // Arizona: 1g THC per day (example limit)
+      mustVerifyAge: true,
+      minAge: 21,
+    },
+  });
+
+  await prisma.complianceRule.upsert({
+    where: { stateCode: 'CA' },
+    update: {},
+    create: {
+      stateCode: 'CA',
+      maxDailyTHCMg: 8000, // California: 8g THC per day (example limit)
+      mustVerifyAge: true,
+      minAge: 21,
     },
   });
 

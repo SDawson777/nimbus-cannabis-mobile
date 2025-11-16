@@ -49,14 +49,31 @@ enum ContentType {
   faq
 }
 
+model Brand {
+  id             String   @id @default(cuid())
+  name           String
+  slug           String   @unique
+  primaryColor   String   @default("#16A34A") // Default green
+  secondaryColor String   @default("#15803D") // Default darker green
+  logoUrl        String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  stores Store[]
+
+  @@index([slug])
+}
+
 model User {
-  id           String   @id @default(uuid())
-  email        String   @unique
+  id           String    @id @default(uuid())
+  email        String    @unique
   name         String?
   phone        String?
   passwordHash String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  dateOfBirth  DateTime? // Date of birth for age verification
+  ageVerified  Boolean   @default(false) // Whether age has been verified
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
   fcmToken     String?
 
   awards         Award[]
@@ -81,6 +98,7 @@ model Store {
   id         String   @id @default(uuid())
   name       String
   slug       String   @unique
+  brandId    String
   address1   String?
   address2   String?
   city       String?
@@ -95,10 +113,12 @@ model Store {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
+  brand    Brand          @relation(fields: [brandId], references: [id], onDelete: Restrict)
   products StoreProduct[]
   orders   Order[]
   Cart     Cart[]
 
+  @@index([brandId])
   @@index([isActive])
   @@index([city, state])
   @@index([latitude, longitude])
@@ -116,6 +136,7 @@ model Product {
   defaultPrice     Float?
   thcPercent       Float?
   cbdPercent       Float?
+  thcMgPerUnit     Float?          // THC milligrams per unit for compliance tracking
   purchasesLast30d Int             @default(0)
 
   variants ProductVariant[]
@@ -431,4 +452,16 @@ model Article {
   updatedAt   DateTime @updatedAt
 
   @@index([category, locale, isPublished])
+}
+
+model ComplianceRule {
+  id              String   @id @default(cuid())
+  stateCode       String   @unique // e.g., 'MI', 'AZ', 'CA'
+  maxDailyTHCMg   Float    // Maximum THC milligrams per day
+  mustVerifyAge   Boolean  @default(true) // Whether age verification is required
+  minAge          Int      @default(21) // Minimum age for purchase
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([stateCode])
 }

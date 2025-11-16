@@ -7,10 +7,19 @@ import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
 import { randomUUID } from 'crypto';
+import {
+  securityHeaders,
+  sanitizeInput,
+  requestSizeLimit,
+  suspiciousActivityDetection,
+  securityLogger,
+} from './middleware/security';
 
 import { initFirebase } from './bootstrap/firebase-admin';
+import aiRouter from './routes/ai';
 import { arRouter } from './routes/ar';
 import { authRouter } from './routes/auth';
+import brandsRouter from './routes/brands';
 import { cartRouter } from './routes/cart';
 import { conciergeRouter } from './routes/concierge';
 import { contentRouter } from './routes/content';
@@ -57,6 +66,13 @@ app.use(
   })
 );
 app.use(cors({ origin: (env.CORS_ORIGIN?.split(',') as any) || '*' }));
+
+// Enhanced security middleware
+app.use(securityHeaders());
+app.use(requestSizeLimit());
+app.use(sanitizeInput());
+app.use(suspiciousActivityDetection());
+app.use(securityLogger());
 
 // Correlation ID + structured request logging + slow request detection
 app.use((req, res, next) => {
@@ -129,11 +145,12 @@ app.get('/api/v1/ready', async (req, res) => {
     (req as any).log?.warn?.('readiness.db_fail', { error: e?.message });
   }
 
-  // Cache probe (placeholder - would check Redis/Memory cache if configured)
+  // Cache probe with real Redis implementation
   if (process.env.REDIS_URL || process.env.CACHE_URL) {
     try {
-      // TODO: Add actual cache probe when cache layer is implemented
-      cache = 'ok'; // Placeholder
+      const { cacheService } = await import('./services/cacheService');
+      const healthCheck = await cacheService.healthCheck();
+      cache = healthCheck.status === 'healthy' ? 'ok' : 'fail';
     } catch (e: any) {
       cache = 'fail';
       (req as any).log?.warn?.('readiness.cache_fail', { error: e?.message });
@@ -183,7 +200,9 @@ try {
 
 // Register routers under both /api and /api/v1 for compatibility with tests and older clients
 const routers = [
+  aiRouter,
   authRouter,
+  brandsRouter,
   profileRouter,
   paymentMethodsRouter,
   addressesRouter,

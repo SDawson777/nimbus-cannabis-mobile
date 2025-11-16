@@ -4,6 +4,7 @@ import { requireAuth } from '../middleware/auth';
 import { z } from 'zod';
 import { rateLimit } from '../middleware/rateLimit';
 import { getCachedPrice, setCachedPrice } from '../utils/lruCache';
+import { ComplianceService } from '../services/complianceService';
 
 export const ordersRouter = Router();
 
@@ -206,6 +207,23 @@ ordersRouter.post(
     const taxes = Math.round(subtotal * 0.06 * 100) / 100;
     const fees = 0;
     const total = Math.round((subtotal + taxes + fees) * 100) / 100;
+
+    // Compliance check before creating order
+    const complianceService = new ComplianceService(prisma);
+    const orderItems = cart.items.map(ci => ({
+      productId: ci.productId,
+      quantity: ci.quantity,
+    }));
+
+    const complianceResult = await complianceService.checkOrderCompliance(uid, storeId, orderItems);
+
+    if (!complianceResult.isValid) {
+      return res.status(400).json({
+        error: 'compliance_violation',
+        message: 'Order violates compliance requirements',
+        violations: complianceResult.errors,
+      });
+    }
 
     const created = await prisma.order.create({
       data: {

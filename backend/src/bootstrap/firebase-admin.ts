@@ -18,6 +18,15 @@ function serviceAccountFromEnv(): admin.ServiceAccount {
 }
 
 export const initFirebase = (): admin.app.App => {
+  // Skip Firebase initialization in test environment
+  if (process.env.NODE_ENV === 'test' || process.env.JEST_WORKER_ID) {
+    // Return a mock app instance for tests
+    return {
+      name: 'test-app',
+      options: {},
+    } as admin.app.App;
+  }
+
   if (appInstance) return appInstance;
   if (admin.apps.length) {
     appInstance = admin.app();
@@ -31,6 +40,12 @@ export const initFirebase = (): admin.app.App => {
 };
 
 export const getFirestore = (): admin.firestore.Firestore => {
+  // Skip Firebase initialization in test environment
+  if (process.env.NODE_ENV === 'test' || process.env.JEST_WORKER_ID) {
+    // Return a mock Firestore instance for tests
+    return {} as admin.firestore.Firestore;
+  }
+
   if (!admin.apps.length) initFirebase();
   return admin.firestore();
 };

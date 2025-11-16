@@ -7,6 +7,7 @@ import { Appearance } from 'react-native';
 
 import logger from '../lib/logger';
 import { logEvent } from '../utils/analytics';
+import { useBrandData } from './BrandContext';
 const EXPO_PUBLIC_OPENWEATHER_KEY = process.env.EXPO_PUBLIC_OPENWEATHER_KEY as string;
 
 // Tuned threshold constants
@@ -74,6 +75,9 @@ interface ThemeProviderProps {
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
+  // Get brand colors from BrandContext
+  const brand = useBrandData();
+
   const [colorTemp, setColorTemp] = useState<ColorTemp>('neutral');
   const [loading, setLoading] = useState<boolean>(true);
   const [debugInfo, setDebugInfo] = useState<DebugInfo>({
@@ -352,13 +356,28 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     })();
   }, [weatherSimulation]); // Re-run when simulation changes
 
-  // 6. Dark-mode interplay
+  // 6. Dark-mode interplay with brand colors
   const isDark = Appearance.getColorScheme() === 'dark';
+
+  // Helper function to darken colors for dark mode
+  const adjustColorForDarkMode = (color: string) => {
+    // Simple approach: if in dark mode, darken the color by reducing the brightness
+    // For production, you might want a more sophisticated color manipulation
+    if (!isDark) return color;
+
+    // Extract RGB values and darken them
+    const hex = color.replace('#', '');
+    const r = Math.max(0, parseInt(hex.substr(0, 2), 16) - 40);
+    const g = Math.max(0, parseInt(hex.substr(2, 2), 16) - 40);
+    const b = Math.max(0, parseInt(hex.substr(4, 2), 16) - 40);
+
+    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+  };
 
   const value: ThemeContextValue = {
     colorTemp,
-    jarsPrimary: isDark ? '#1B4029' : '#2E5D46',
-    jarsSecondary: '#8CD24C',
+    jarsPrimary: adjustColorForDarkMode(brand.primaryColor),
+    jarsSecondary: adjustColorForDarkMode(brand.secondaryColor),
     jarsBackground: isDark ? '#121212' : '#F9F9F9',
     loading,
     debugInfo,

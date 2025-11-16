@@ -1,4 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
+import { cacheService } from '../services/cacheService';
+import { logger } from '../utils/logger';
 
 interface RateBucket {
   count: number;
@@ -8,11 +10,11 @@ const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
 const rateMap = new Map<string, RateBucket>();
 
 function key(ip: string, route: string, token?: string) {
-  return `${ip}|${route}|${token || 'anon'}`;
+  return `rate_limit:${ip}|${route}|${token || 'anon'}`;
 }
 
 export function rateLimit(routeId: string, max = 60, windowMs = RATE_LIMIT_WINDOW_MS) {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
     const ip = (req.ip || (req as any).connection?.remoteAddress || 'unknown').replace(
       '::ffff:',
       ''
@@ -22,6 +24,45 @@ export function rateLimit(routeId: string, max = 60, windowMs = RATE_LIMIT_WINDO
       typeof auth === 'string' && auth.startsWith('Bearer ') ? auth.slice(7) : undefined;
     const k = key(ip, routeId, tokenPart);
     const now = Date.now();
+
+    // Try Redis first if available
+    if (cacheService.isAvailable()) {
+      try {
+        const windowStart = Math.floor(now / windowMs) * windowMs;
+        const windowKey = `${k}:${windowStart}`;
+
+        const count = await cacheService.increment(windowKey, Math.ceil(windowMs / 1000));
+
+        // Add rate limit headers
+        res.setHeader('X-RateLimit-Limit', max);
+        res.setHeader('X-RateLimit-Remaining', Math.max(0, max - count));
+        res.setHeader('X-RateLimit-Reset', new Date(windowStart + windowMs).toISOString());
+
+        if (count > max) {
+          logger.warn('Rate limit exceeded (Redis)', {
+            ip,
+            route: routeId,
+            count,
+            max,
+            windowMs,
+          });
+          return res.status(429).json({
+            error: 'Too Many Requests',
+            message: `Rate limit exceeded. Try again in ${Math.ceil((windowStart + windowMs - now) / 1000)} seconds.`,
+            retryAfter: Math.ceil((windowStart + windowMs - now) / 1000),
+          });
+        }
+
+        return next();
+      } catch (error) {
+        logger.error('Redis rate limit error, falling back to memory', {
+          error: error instanceof Error ? error.message : 'Unknown error',
+        });
+        // Fall through to memory-based rate limiting
+      }
+    }
+
+    // Fallback to in-memory rate limiting
     let bucket = rateMap.get(k);
     if (!bucket || now - bucket.first > windowMs) {
       bucket = { count: 0, first: now };

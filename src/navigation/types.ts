@@ -70,4 +70,5 @@ export type RootStackParamList = {
   MyJarsInsights: undefined;
   EthicalAIDashboard: undefined;
   LanguageSelection: undefined;
+  StrainFinder: undefined;
 };

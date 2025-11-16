@@ -225,6 +225,23 @@ export default function HomeScreen() {
           </Pressable>
         </View>
 
+        {/* AI Strain Finder CTA */}
+        <Pressable
+          style={[styles.strainFinderCTA, { backgroundColor: jarsSecondary }]}
+          onPress={() => {
+            hapticLight();
+            navigation.navigate('StrainFinder');
+          }}
+        >
+          <View style={styles.strainFinderContent}>
+            <Text style={styles.strainFinderTitle}>🧠 Find My Perfect Strain</Text>
+            <Text style={styles.strainFinderSubtitle}>
+              Let AI help you discover products tailored to your needs
+            </Text>
+          </View>
+          <Text style={styles.strainFinderArrow}>→</Text>
+        </Pressable>
+
         {isLoading && <ForYouTodaySkeleton />}
         {forYou && !isLoading && (
           <ForYouTodayCard
@@ -559,5 +576,36 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
     lineHeight: 20,
+  },
+  strainFinderCTA: {
+    backgroundColor: '#4CAF50',
+    marginHorizontal: 16,
+    marginVertical: 16,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  strainFinderContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 20,
+  },
+  strainFinderTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    marginBottom: 4,
+  },
+  strainFinderSubtitle: {
+    fontSize: 14,
+    color: '#E8F5E8',
+    flex: 1,
+  },
+  strainFinderArrow: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    marginLeft: 12,
   },
 });

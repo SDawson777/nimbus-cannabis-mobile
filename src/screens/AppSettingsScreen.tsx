@@ -102,6 +102,34 @@ ${
     Alert.alert('Weather Debug Info', debugText, [{ text: 'OK' }]);
   };
 
+  const showDemoBackendHelper = () => {
+    const demoText = `
+🔧 Demo Backend Options:
+
+📱 Local Docker (Recommended):
+http://localhost:3000
+
+🌐 Production Demo:
+https://jars-cannabis-mobile-app-production.up.railway.app
+
+📧 Demo Credentials:
+• buyer@demo.com / password123
+• admin@demo.com / admin123  
+• manager@demo.com / manager123
+
+💡 To switch backends:
+1. Stop the app (Cmd+C in terminal)
+2. Set EXPO_PUBLIC_API_BASE_URL=<url>
+3. Restart with: npm start
+
+Docker Quick Start:
+docker-compose up -d
+npm run seed:demo
+    `.trim();
+
+    Alert.alert('Demo Backend Helper', demoText, [{ text: 'OK' }]);
+  };
+
   const getConditionDisplayName = (condition: 'rain' | 'sunny' | 'cloudy' | 'snow' | null) => {
     if (!condition) return 'None';
     return condition.charAt(0).toUpperCase() + condition.slice(1);
@@ -319,6 +347,41 @@ ${
               ]}
             >
               View
+            </Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.row}>
+          <Text
+            style={[
+              styles.label,
+              {
+                color: textColor,
+                fontSize: scaleSize(16),
+              },
+            ]}
+          >
+            Demo Backend Helper
+          </Text>
+          <Pressable
+            style={[
+              styles.debugButton,
+              {
+                backgroundColor: highContrast ? '#E0E0E0' : '#F0F0F0',
+              },
+            ]}
+            onPress={showDemoBackendHelper}
+          >
+            <Text
+              style={[
+                styles.debugButtonText,
+                {
+                  color: textColor,
+                  fontSize: scaleSize(14),
+                },
+              ]}
+            >
+              Info
             </Text>
           </Pressable>
         </View>

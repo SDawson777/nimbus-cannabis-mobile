@@ -4,7 +4,7 @@
   "description": "Express + Firestore backend for JARS Phase 4",
   "main": "dist/index.js",
   "engines": {
-    "node": "20.11.1",
+    "node": ">=20.11.1 <21",
     "npm": ">=9"
   },
   "scripts": {

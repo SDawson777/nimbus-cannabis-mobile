@@ -10,6 +10,18 @@ pluginManagement {
   }
 }
 
+// Provide a resolution strategy for expo-module-gradle-plugin so Gradle can locate it
+pluginManagement {
+  resolutionStrategy {
+    eachPlugin {
+      if (requested.id.id == 'expo-module-gradle-plugin') {
+        // Map plugin id to module artifact. Version mirrors expo-modules-core package version.
+        useModule("host.exp.exponent:expo-module-gradle-plugin:1.11.14")
+      }
+    }
+  }
+}
+
 dependencyResolutionManagement {
   versionCatalogs {
     reactAndroidLibs {

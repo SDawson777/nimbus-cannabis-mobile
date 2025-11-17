@@ -26,7 +26,7 @@ PODS:
     - ExpoModulesCore
   - ExpoLocalAuthentication (13.8.0):
     - ExpoModulesCore
-  - ExpoLocalization (17.0.7):
+  - ExpoLocalization (14.8.4):
     - ExpoModulesCore
   - ExpoModulesCore (1.11.14):
     - glog
@@ -1507,7 +1507,7 @@ SPEC CHECKSUMS:
   ExpoHaptics: c91902e436f3fb0e07aa19acc118018089fa90de
   ExpoKeepAwake: 3b8cf8533b9212500565a1e41fb080fc5af29918
   ExpoLocalAuthentication: 5967317248e27c53f77c61ff5608d74329b4c41d
-  ExpoLocalization: b852a5d8ec14c5349c1593eca87896b5b3ebfcca
+  ExpoLocalization: 7423aa1abcc59209dc2ce2b9bb63776a18023a98
   ExpoModulesCore: 43ebd65adf2c0e6ffb0de24a41f8f7de12829331
   ExpoSecureStore: 4cec57fd2c40dcff05ce2186c39afc1af39d213c
   ExpoSpeech: 46ddff772c2157828e439c1f74a07f10ec20ff5a

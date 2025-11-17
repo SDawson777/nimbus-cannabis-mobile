@@ -17,15 +17,23 @@ export default function AgeVerificationScreen() {
   const [showDisclaimer, setShowDisclaimer] = useState(false);
 
   useEffect(() => {
-    AsyncStorage.getItem('ageVerified').then(val => {
-      if (val === 'true') {
-        navigation.replace('LoginSignUpDecision');
-      }
-    });
+    AsyncStorage.getItem('ageVerified')
+      .then(val => {
+        if (val === 'true') {
+          navigation.replace('LoginSignUpDecision');
+        }
+      })
+      .catch(() => {
+        // Silently handle AsyncStorage errors - assume not verified
+      });
   }, [navigation]);
 
   const handleConfirm = async () => {
-    await AsyncStorage.setItem('ageVerified', 'true');
+    try {
+      await AsyncStorage.setItem('ageVerified', 'true');
+    } catch {
+      // Silently handle AsyncStorage errors - still proceed with navigation
+    }
     hapticLight();
     navigation.replace('LoginSignUpDecision');
   };

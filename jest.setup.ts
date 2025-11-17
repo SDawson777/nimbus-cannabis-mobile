@@ -58,6 +58,24 @@ if (typeof (global as any).TextEncoder === 'undefined') {
   (global as any).TextDecoder = TextDecoder;
 }
 
+// Mock fetch for Node.js test environment
+if (typeof (global as any).fetch === 'undefined') {
+  (global as any).fetch = jest.fn(() =>
+    Promise.resolve({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve({
+        id: 'jars',
+        name: 'JARS',
+        slug: 'jars',
+        primaryColor: '#16A34A',
+        secondaryColor: '#15803D',
+        logoUrl: null
+      }),
+    })
+  );
+}
+
 // Mock Prisma client during unit tests to avoid requiring `prisma generate` for CI/local dev
 // Prisma mock is provided via a manual JS mock under `tests/__mocks__/@prisma/client.js`
 // This ensures imports of `@prisma/client` at module-eval time resolve to the mock.

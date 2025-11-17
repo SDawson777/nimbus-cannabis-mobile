@@ -14,8 +14,9 @@ RUN apk add --no-cache \
     curl
 
 FROM base AS deps
-# Copy package files
+# Copy package files and Prisma schema for postinstall script
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+COPY prisma ./prisma
 
 # Install dependencies based on the preferred package manager
 RUN \

@@ -64,14 +64,15 @@ if (typeof (global as any).fetch === 'undefined') {
     Promise.resolve({
       ok: true,
       status: 200,
-      json: () => Promise.resolve({
-        id: 'jars',
-        name: 'JARS',
-        slug: 'jars',
-        primaryColor: '#16A34A',
-        secondaryColor: '#15803D',
-        logoUrl: null
-      }),
+      json: () =>
+        Promise.resolve({
+          id: 'jars',
+          name: 'JARS',
+          slug: 'jars',
+          primaryColor: '#16A34A',
+          secondaryColor: '#15803D',
+          logoUrl: null,
+        }),
     })
   );
 }

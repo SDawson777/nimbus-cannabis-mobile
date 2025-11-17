@@ -16,3 +16,13 @@ applyNativeModulesSettingsGradle(settings)
 
 include ':app'
 includeBuild(new File(["node", "--print", "require.resolve('@react-native/gradle-plugin/package.json', { paths: [require.resolve('react-native/package.json')] })"].execute(null, rootDir).text.trim()).getParentFile())
+
+// Ensure expo-modules-core is available to the plugin DSL during Gradle configuration
+try {
+  def expoModulesCore = new File(rootDir, 'node_modules/expo-modules-core/android')
+  if (expoModulesCore.exists()) {
+    includeBuild(expoModulesCore)
+  }
+} catch (e) {
+  // ignore if not present in this environment
+}

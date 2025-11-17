@@ -16,7 +16,8 @@ buildscript {
     }
     dependencies {
         classpath 'com.google.gms:google-services:4.3.3'
-        classpath('com.android.tools.build:gradle')
+        // Pin Android Gradle Plugin to a known compatible version to avoid plugin/component resolution issues
+        classpath('com.android.tools.build:gradle:8.2.0')
         classpath('com.facebook.react:react-native-gradle-plugin')
     }
 }

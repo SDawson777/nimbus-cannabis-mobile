@@ -22,7 +22,7 @@
     "seed:demo": "DEMO_MODE=true ts-node --transpile-only prisma/seed-demo.ts",
     "seed:demo:verbose": "DEMO_MODE=true DEBUG=true ts-node --transpile-only prisma/seed-demo.ts",
     "test:ci": "NODE_OPTIONS=--max_old_space_size=4096 jest --config jest.config.cjs --runInBand",
-    "lint": "echo 'Backend lint: No ESLint config - using root lint rules'",
+    "lint": "eslint src --ext .ts,.js --ignore-pattern '**/__tests__/**' --ignore-pattern '**/*.test.ts'",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "keywords": [],

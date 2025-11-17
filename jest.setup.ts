@@ -59,6 +59,7 @@ if (typeof (global as any).TextEncoder === 'undefined') {
 }
 
 // Mock fetch for Node.js test environment
+// Provides default brand data to prevent ReferenceError in BrandContext tests
 if (typeof (global as any).fetch === 'undefined') {
   (global as any).fetch = jest.fn(() =>
     Promise.resolve({

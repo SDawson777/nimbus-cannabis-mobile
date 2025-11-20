@@ -21,7 +21,7 @@ const contactSchema = z
 ordersRouter.post(
   '/orders',
   requireAuth,
-  rateLimit('orders:create', 10, 60_000),
+  rateLimit('orders:create', { max: 10, windowMs: 60_000 }),
   async (req, res) => {
     const uid = (req as any).user.userId as string;
     let {

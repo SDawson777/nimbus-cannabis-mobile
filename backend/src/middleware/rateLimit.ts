@@ -1,19 +1,44 @@
 import type { Request, Response, NextFunction } from 'express';
 import { cacheService } from '../services/cacheService';
 import { logger } from '../utils/logger';
+import { resolvedRateLimitConfig } from '../env';
 
 interface RateBucket {
   count: number;
   first: number;
 }
-const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
+
+export interface RateLimitOptions {
+  max?: number;
+  windowMs?: number;
+  blockSeconds?: number;
+}
+
 const rateMap = new Map<string, RateBucket>();
 
 function key(ip: string, route: string, token?: string) {
   return `rate_limit:${ip}|${route}|${token || 'anon'}`;
 }
 
-export function rateLimit(routeId: string, max = 60, windowMs = RATE_LIMIT_WINDOW_MS) {
+function resolveConfig(maxOrOptions?: number | RateLimitOptions) {
+  if (typeof maxOrOptions === 'number') {
+    return {
+      max: maxOrOptions,
+      windowMs: resolvedRateLimitConfig.windowMs,
+      blockSeconds: resolvedRateLimitConfig.blockSeconds,
+    };
+  }
+
+  return {
+    max: maxOrOptions?.max ?? resolvedRateLimitConfig.max,
+    windowMs: maxOrOptions?.windowMs ?? resolvedRateLimitConfig.windowMs,
+    blockSeconds: maxOrOptions?.blockSeconds ?? resolvedRateLimitConfig.blockSeconds,
+  };
+}
+
+export function rateLimit(routeId: string, maxOrOptions?: number | RateLimitOptions) {
+  const { max, windowMs, blockSeconds } = resolveConfig(maxOrOptions);
+
   return async (req: Request, res: Response, next: NextFunction) => {
     const ip = (req.ip || (req as any).connection?.remoteAddress || 'unknown').replace(
       '::ffff:',
@@ -31,7 +56,8 @@ export function rateLimit(routeId: string, max = 60, windowMs = RATE_LIMIT_WINDO
         const windowStart = Math.floor(now / windowMs) * windowMs;
         const windowKey = `${k}:${windowStart}`;
 
-        const count = await cacheService.increment(windowKey, Math.ceil(windowMs / 1000));
+        const ttlSeconds = Math.max(1, Math.ceil(blockSeconds ?? windowMs / 1000));
+        const count = await cacheService.increment(windowKey, ttlSeconds);
 
         // Add rate limit headers
         res.setHeader('X-RateLimit-Limit', max);
@@ -46,10 +72,12 @@ export function rateLimit(routeId: string, max = 60, windowMs = RATE_LIMIT_WINDO
             max,
             windowMs,
           });
+          const retryAfterSeconds = Math.ceil((windowStart + windowMs - now) / 1000);
+          res.setHeader('Retry-After', retryAfterSeconds);
           return res.status(429).json({
             error: 'Too Many Requests',
-            message: `Rate limit exceeded. Try again in ${Math.ceil((windowStart + windowMs - now) / 1000)} seconds.`,
-            retryAfter: Math.ceil((windowStart + windowMs - now) / 1000),
+            message: `Rate limit exceeded. Try again in ${retryAfterSeconds} seconds.`,
+            retryAfter: retryAfterSeconds,
           });
         }
 
@@ -70,10 +98,13 @@ export function rateLimit(routeId: string, max = 60, windowMs = RATE_LIMIT_WINDO
     }
     bucket.count++;
     if (bucket.count > max) {
-      return res.status(429).json({ error: 'rate_limited', retryAfterMs: windowMs });
+      const retryAfterSeconds = Math.ceil(windowMs / 1000);
+      res.setHeader('Retry-After', retryAfterSeconds);
+      return res.status(429).json({ error: 'rate_limited', retryAfter: retryAfterSeconds });
     }
     res.setHeader('X-RateLimit-Limit', String(max));
     res.setHeader('X-RateLimit-Remaining', String(Math.max(0, max - bucket.count)));
+    res.setHeader('X-RateLimit-Reset', new Date(bucket.first + windowMs).toISOString());
     return next();
   };
 }

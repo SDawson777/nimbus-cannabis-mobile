@@ -5,6 +5,26 @@ import { logger } from './utils/logger';
 const isTestEnvironment =
   process.env.NODE_ENV === 'test' || process.env.JEST_WORKER_ID !== undefined;
 
+const rateLimitDefaults = {
+  windowMs: '60000',
+  max: '60',
+  blockSeconds: '60',
+} as const;
+const externalApiDefaults = {
+  timeoutMs: '5000',
+} as const;
+
+const weakJwtSecrets = new Set(
+  [
+    'changeme',
+    'default',
+    'secret',
+    'jwtsecret',
+    'password',
+    'test-jwt-secret-at-least-32-characters-long',
+  ].map(entry => entry.toLowerCase())
+);
+
 // Zod schema for environment validation (production/development)
 const prodEnvSchema = z.object({
   // Critical API Keys
@@ -32,6 +52,28 @@ const prodEnvSchema = z.object({
     .regex(/^\d+$/, 'WEATHER_CACHE_TTL_MS must be a number')
     .optional()
     .default('300000'),
+  EXTERNAL_API_TIMEOUT_MS: z
+    .string()
+    .regex(/^\d+$/, 'EXTERNAL_API_TIMEOUT_MS must be a number')
+    .optional()
+    .default(externalApiDefaults.timeoutMs),
+
+  // Rate limiting
+  RATE_LIMIT_WINDOW_MS: z
+    .string()
+    .regex(/^\d+$/, 'RATE_LIMIT_WINDOW_MS must be a number')
+    .optional()
+    .default(rateLimitDefaults.windowMs),
+  RATE_LIMIT_MAX_REQUESTS: z
+    .string()
+    .regex(/^\d+$/, 'RATE_LIMIT_MAX_REQUESTS must be a number')
+    .optional()
+    .default(rateLimitDefaults.max),
+  RATE_LIMIT_BLOCK_SECONDS: z
+    .string()
+    .regex(/^\d+$/, 'RATE_LIMIT_BLOCK_SECONDS must be a number')
+    .optional()
+    .default(rateLimitDefaults.blockSeconds),
 
   // Optional configurations
   PORT: z.string().regex(/^\d+$/, 'PORT must be a number').optional().default('8080'),
@@ -77,6 +119,14 @@ const testEnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).optional().default('test'),
   DEBUG_DIAG: z.enum(['0', '1']).optional().default('0'),
   CORS_ORIGIN: z.string().optional(),
+  RATE_LIMIT_WINDOW_MS: z.string().optional().default(rateLimitDefaults.windowMs),
+  RATE_LIMIT_MAX_REQUESTS: z.string().optional().default(rateLimitDefaults.max),
+  RATE_LIMIT_BLOCK_SECONDS: z.string().optional().default(rateLimitDefaults.blockSeconds),
+  EXTERNAL_API_TIMEOUT_MS: z
+    .string()
+    .regex(/^\d+$/, 'EXTERNAL_API_TIMEOUT_MS must be a number')
+    .optional()
+    .default(externalApiDefaults.timeoutMs),
 });
 
 // Use appropriate schema based on environment
@@ -116,7 +166,42 @@ function validateEnv(): EnvConfig {
  * Validated environment configuration
  * Will throw on startup if any required variables are missing
  */
-export const env = validateEnv();
+const validatedEnv = validateEnv();
+
+function ensureJwtSecretStrength(config: EnvConfig) {
+  const secret = config.JWT_SECRET.trim();
+  const isProd = config.NODE_ENV === 'production';
+  const missingPatterns: string[] = [];
+  if (!/[a-z]/.test(secret)) missingPatterns.push('a lowercase letter');
+  if (!/[A-Z]/.test(secret)) missingPatterns.push('an uppercase letter');
+  if (!/[0-9]/.test(secret)) missingPatterns.push('a number');
+  if (!/[^A-Za-z0-9]/.test(secret)) missingPatterns.push('a symbol');
+
+  const isForbidden = weakJwtSecrets.has(secret.toLowerCase());
+  if (!missingPatterns.length && !isForbidden) return;
+
+  let message = '';
+  if (missingPatterns.length) {
+    message = `JWT_SECRET must include ${missingPatterns.join(', ')}`;
+  }
+  if (isForbidden) {
+    message = message
+      ? `${message} and cannot use placeholder secrets`
+      : 'JWT_SECRET cannot use placeholder secrets';
+  }
+
+  if (isProd) {
+    const error = new Error(message);
+    error.name = 'EnvironmentValidationError';
+    throw error;
+  }
+
+  logger.warn('Weak JWT_SECRET detected', { reason: message, nodeEnv: config.NODE_ENV });
+}
+
+ensureJwtSecretStrength(validatedEnv);
+
+export const env = validatedEnv;
 
 /**
  * Helper to check if running in development mode
@@ -137,3 +222,11 @@ export const isTest = env.NODE_ENV === 'test';
  * Helper to check if debug diagnostics are enabled
  */
 export const isDebugEnabled = env.DEBUG_DIAG === '1';
+
+export const resolvedRateLimitConfig = {
+  windowMs: Number(env.RATE_LIMIT_WINDOW_MS),
+  max: Number(env.RATE_LIMIT_MAX_REQUESTS),
+  blockSeconds: Number(env.RATE_LIMIT_BLOCK_SECONDS),
+};
+
+export const externalApiTimeoutMs = Number(env.EXTERNAL_API_TIMEOUT_MS);

@@ -2,10 +2,26 @@ import { Router } from 'express';
 import { prisma } from '../prismaClient';
 import { requireAuth } from '../middleware/auth';
 import { cacheService } from '../services/cacheService';
+import { rateLimit } from '../middleware/rateLimit';
+import { validateRequest } from '../middleware/validation';
+import { z } from 'zod';
 
 export const productsRouter = Router();
 
-productsRouter.get('/products', async (req, res) => {
+const reviewSchema = z.object({
+  rating: z.coerce
+    .number({ invalid_type_error: 'rating 1..5 required' })
+    .int('rating 1..5 required')
+    .min(1, 'rating 1..5 required')
+    .max(5, 'rating 1..5 required'),
+  comment: z.string().max(2000).optional(),
+  recommend: z.boolean().optional(),
+  text: z.string().max(2000).optional(),
+});
+
+type ReviewBody = z.infer<typeof reviewSchema>;
+
+productsRouter.get('/products', rateLimit('products_list'), async (req, res) => {
   const {
     storeId,
     q,
@@ -102,7 +118,7 @@ productsRouter.get('/products', async (req, res) => {
 // note: product-by-id route is defined after specific routes (slug/categories/featured) to avoid param collisions
 
 // Reviews
-productsRouter.get('/products/:id/reviews', async (req, res) => {
+productsRouter.get('/products/:id/reviews', rateLimit('product_reviews_list'), async (req, res) => {
   const page = parseInt((req.query.page as string) || '1');
   const limit = Math.min(100, parseInt((req.query.limit as string) || '24'));
   const sort = (req.query.sort as string) || '-createdAt';
@@ -116,19 +132,24 @@ productsRouter.get('/products/:id/reviews', async (req, res) => {
   res.json({ reviews, pagination: { page, limit, total: reviews.length } });
 });
 
-productsRouter.post('/products/:id/reviews', requireAuth, async (req, res) => {
-  const uid = (req as any).user.userId as string;
-  const { rating, comment, recommend, text } = req.body || {};
-  // tests expect rating 1..5
-  if (!rating || rating < 1 || rating > 5)
-    return res.status(400).json({ error: 'rating 1..5 required' });
-  const r = await (prisma as any).review.create({
-    data: { productId: req.params.id, userId: uid, rating, text: comment || text, recommend },
-  });
-  res.status(201).json({ review: r });
-});
+productsRouter.post(
+  '/products/:id/reviews',
+  rateLimit('product_reviews_create', { max: 20 }),
+  requireAuth,
+  validateRequest(reviewSchema, {
+    onError: error => ({ body: { error: error.issues[0]?.message ?? 'rating 1..5 required' } }),
+  }),
+  async (req, res) => {
+    const uid = (req as any).user.userId as string;
+    const { rating, comment, recommend, text } = req.body as ReviewBody;
+    const r = await (prisma as any).review.create({
+      data: { productId: req.params.id, userId: uid, rating, text: comment || text, recommend },
+    });
+    res.status(201).json({ review: r });
+  }
+);
 // get product by slug
-productsRouter.get('/products/slug/:slug', async (req, res) => {
+productsRouter.get('/products/slug/:slug', rateLimit('products_slug_lookup'), async (req, res) => {
   const slug = req.params.slug;
   const p = await ((prisma as any).product.findManyBySlug
     ? (prisma as any).product.findManyBySlug({ where: { slug } })
@@ -138,7 +159,7 @@ productsRouter.get('/products/slug/:slug', async (req, res) => {
 });
 
 // categories
-productsRouter.get('/products/categories', async (req, res) => {
+productsRouter.get('/products/categories', rateLimit('products_categories'), async (req, res) => {
   // naive categories from products
   const all = await prisma.product.findMany({ take: 100 });
   const counts: Record<string, number> = {};
@@ -148,14 +169,14 @@ productsRouter.get('/products/categories', async (req, res) => {
 });
 
 // featured
-productsRouter.get('/products/featured', async (req, res) => {
+productsRouter.get('/products/featured', rateLimit('products_featured'), async (req, res) => {
   const all = await prisma.product.findMany({ take: 100 });
   const featured = all.filter((p: any) => p.featured);
   res.json({ products: featured });
 });
 
 // product by id (define after specific routes to avoid collisions)
-productsRouter.get('/products/:id', async (req, res) => {
+productsRouter.get('/products/:id', rateLimit('products_detail'), async (req, res) => {
   const p = await prisma.product.findUnique({
     where: { id: req.params.id },
     include: { variants: true, reviews: { take: 5, orderBy: { createdAt: 'desc' } } },

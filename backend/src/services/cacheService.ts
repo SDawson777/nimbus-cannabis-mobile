@@ -295,4 +295,14 @@ export const CacheKeys = {
     `weather_rec:${condition}:${city}:${state}`,
   complianceRules: (stateCode: string) => `compliance:${stateCode}`,
   rateLimit: (userId: string, endpoint: string) => `rate_limit:${userId}:${endpoint}`,
+  recommendationsForYou: (storeId: string | undefined, limit: number) =>
+    `recs:for_you:${storeId || 'all'}:${limit}`,
+  recommendationsRelated: (productId: string, limit: number) =>
+    `recs:related:${productId}:${limit}`,
+  weatherCondition: (latBucket: string, lonBucket: string) =>
+    `weather:condition:${latBucket}:${lonBucket}`,
+  storesList: (hash: string) => `stores:list:${hash}`,
+  pushTokenBackoff: (userId: string) => `push:backoff:${userId}`,
+  pushTokenFailures: (userId: string) => `push:failures:${userId}`,
+  conciergeDegraded: () => 'concierge:degraded',
 } as const;

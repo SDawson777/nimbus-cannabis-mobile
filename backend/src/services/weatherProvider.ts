@@ -4,6 +4,9 @@
 // condition from provided query params (temp, clouds, precip) or fall back to
 // time-of-day logic similar to the mobile placeholder.
 
+import { cacheService, CacheKeys } from './cacheService';
+import { logger } from '../utils/logger';
+
 export type WeatherObservation = {
   tempC?: number; // temperature in Celsius
   cloudCoverPct?: number; // 0-100
@@ -12,6 +15,20 @@ export type WeatherObservation = {
   snow?: boolean;
   time?: Date;
 };
+
+function bucketCoordinate(value: number) {
+  return value.toFixed(2);
+}
+
+async function fetchWithTimeout(url: string, init: Record<string, any>, timeoutMs: number) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...init, signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
 // Normalize an observation into one of our supported condition keys.
 export function normalizeObservationToCondition(obs: WeatherObservation): string {
@@ -51,10 +68,13 @@ export async function getCurrentWeatherCondition(
     const { env } = await import('../env');
     const url = env.WEATHER_API_URL;
     const apiKey = env.WEATHER_API_KEY;
-    const ttl = Number(env.WEATHER_CACHE_TTL_MS || '300000');
+    const ttlMs = Number(env.WEATHER_CACHE_TTL_MS || '300000');
+    const timeoutMs = Number(env.EXTERNAL_API_TIMEOUT_MS || '5000');
     if (url && _lat != null && _lon != null) {
-      const cacheKey = `${Math.round(_lat * 100) / 100},${Math.round(_lon * 100) / 100}`;
-      const cached = getCachedCondition(cacheKey);
+      const latBucket = bucketCoordinate(_lat);
+      const lonBucket = bucketCoordinate(_lon);
+      const cacheKey = CacheKeys.weatherCondition(latBucket, lonBucket);
+      const cached = await getWeatherCache(cacheKey);
       if (cached) return cached;
 
       const qs = url.includes('?') ? `&lat=${_lat}&lon=${_lon}` : `?lat=${_lat}&lon=${_lon}`;
@@ -63,7 +83,7 @@ export async function getCurrentWeatherCondition(
       if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
       const fetchImpl: any = (global as any).fetch;
       if (typeof fetchImpl === 'function') {
-        const resp = await fetchImpl(fetchUrl, { headers });
+        const resp = await fetchWithTimeout(fetchUrl, { headers }, timeoutMs);
         if (resp && typeof resp.json === 'function') {
           const data = await resp.json();
           // Adapter: prefer explicit string condition when available
@@ -87,14 +107,16 @@ export async function getCurrentWeatherCondition(
             condition = normalizeObservationToCondition(obs);
           }
           if (condition && typeof condition === 'string') {
-            cacheCondition(cacheKey, condition, ttl);
+            await setWeatherCache(cacheKey, condition, ttlMs);
             return condition;
           }
         }
       }
     }
-  } catch {
-    // Swallow and fall through to local inference
+  } catch (error) {
+    logger.warn('weatherProvider.external_failed', {
+      error: error instanceof Error ? error.message : 'unknown',
+    });
   }
 
   // 2) If caller supplied a partial observation, infer condition from it.
@@ -125,4 +147,21 @@ export function getCachedCondition(key: string): string | undefined {
     return undefined;
   }
   return hit.value;
+}
+
+async function getWeatherCache(key: string): Promise<string | undefined> {
+  if (cacheService.isAvailable()) {
+    const cached = await cacheService.get<string>(key);
+    if (cached) return cached;
+  }
+  return getCachedCondition(key);
+}
+
+async function setWeatherCache(key: string, value: string, ttlMs: number) {
+  const ttlSeconds = Math.max(30, Math.floor(ttlMs / 1000));
+  if (cacheService.isAvailable()) {
+    await cacheService.set(key, value, ttlSeconds);
+    return;
+  }
+  cacheCondition(key, value, ttlMs);
 }

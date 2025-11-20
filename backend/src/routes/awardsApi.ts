@@ -62,7 +62,7 @@ awardsApiRouter.get('/awards', requireAuth, async (req, res) => {
 awardsApiRouter.post(
   '/awards/:id/redeem',
   requireAuth,
-  rateLimit('awards:redeem', 5, 60_000),
+  rateLimit('awards:redeem', { max: 5, windowMs: 60_000 }),
   async (req, res) => {
     req.body = { awardId: req.params.id } as any;
     return redeemAward(req as any, res as any);

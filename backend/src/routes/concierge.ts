@@ -1,8 +1,16 @@
 import { Router } from 'express';
 import { logger } from '../utils/logger';
 import { v4 as uuidv4 } from 'uuid';
-import { env } from '../env';
+import { env, externalApiTimeoutMs } from '../env';
+import { cacheService, CacheKeys } from '../services/cacheService';
 const rateLimitMap = new Map<string, { count: number; reset: number }>();
+const conciergeBackoffMemory = { until: 0 };
+const CONCIERGE_DEGRADE_SECONDS = 90;
+const fallbackReplies = [
+  'I am syncing with our budtenders. Give me a moment and try again shortly.',
+  'My upstream helper is unavailable right now. Please retry in a minute.',
+  'Still gathering recommendations. Ping me again soon if this persists.',
+];
 export const conciergeRouter = Router();
 
 // Timeout helper
@@ -43,6 +51,30 @@ async function withBackoff<T>(fn: () => Promise<T>, maxRetries = 2): Promise<T> 
   throw lastErr;
 }
 
+function fallbackReply(message: string) {
+  const hash =
+    Array.from(message || '').reduce((acc, char) => acc + char.charCodeAt(0), 0) %
+    fallbackReplies.length;
+  return fallbackReplies[hash];
+}
+
+async function isConciergeDegraded() {
+  if (cacheService.isAvailable()) {
+    const until = await cacheService.get<number>(CacheKeys.conciergeDegraded());
+    return typeof until === 'number' && until > Date.now();
+  }
+  return conciergeBackoffMemory.until > Date.now();
+}
+
+async function setConciergeDegraded(seconds: number) {
+  const until = Date.now() + seconds * 1000;
+  if (cacheService.isAvailable()) {
+    await cacheService.set(CacheKeys.conciergeDegraded(), until, seconds);
+  } else {
+    conciergeBackoffMemory.until = until;
+  }
+}
+
 conciergeRouter.post('/concierge/chat', async (req, res) => {
   const apiKey = env.OPENAI_API_KEY;
   const { message, history = [] } = req.body || {};
@@ -51,6 +83,10 @@ conciergeRouter.post('/concierge/chat', async (req, res) => {
   const reqId = uuidv4();
   if (!apiKey) return res.status(503).json({ error: 'OPENAI_API_KEY not set' });
   if (!message) return res.status(400).json({ error: 'message required' });
+
+  if (await isConciergeDegraded()) {
+    return res.json({ reply: fallbackReply(message), usage: { degraded: true } });
+  }
 
   // --- Rate limiting ---
   const now = Date.now();
@@ -91,7 +127,7 @@ conciergeRouter.post('/concierge/chat', async (req, res) => {
             temperature: 0.2,
             max_tokens: 64,
           }),
-          15000
+          Math.min(externalApiTimeoutMs, 15000)
         ),
       2
     );
@@ -107,6 +143,11 @@ conciergeRouter.post('/concierge/chat', async (req, res) => {
     const code = e?.code || e?.error?.type || 'openai_error';
     const msg = e?.message || 'Upstream OpenAI error';
     logger.debug('[concierge] error', { reqId, userId, latency, code, message: msg });
-    res.status(status).json({ error: { code, message: msg }, usage: { latency } });
+    await setConciergeDegraded(CONCIERGE_DEGRADE_SECONDS);
+    res.status(status).json({
+      reply: fallbackReply(String(message)),
+      error: { code, message: msg },
+      usage: { latency, degraded: true },
+    });
   }
 });

@@ -1,11 +1,22 @@
 import { Router } from 'express';
 import { prisma } from '../prismaClient';
 import { haversineMeters } from '../utils/geo';
+import { cacheService, CacheKeys } from '../services/cacheService';
+import { createHash } from 'crypto';
 
 export const storesRouter = Router();
+const STORES_CACHE_TTL = 120; // seconds
+
+function buildStoresCacheKey(params: Record<string, string | undefined>) {
+  const hash = createHash('sha1').update(JSON.stringify(params)).digest('hex');
+  return CacheKeys.storesList(hash);
+}
 
 storesRouter.get('/stores', async (req, res) => {
   const { lat, lng, radius, q } = req.query as Record<string, string>;
+  const cacheKey = buildStoresCacheKey({ lat, lng, radius, q });
+  const cached = await cacheService.get<any[]>(cacheKey);
+  if (cached) return res.json(cached);
   const where: any = { isActive: true };
   if (q) {
     where.OR = [
@@ -34,6 +45,7 @@ storesRouter.get('/stores', async (req, res) => {
       return res.status(400).json({ error: 'lat/lng/radius must be numbers' });
     }
   }
+  await cacheService.set(cacheKey, filtered, STORES_CACHE_TTL);
   res.json(filtered);
 });
 

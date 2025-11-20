@@ -1,6 +1,5 @@
 import { prisma } from '../../prismaClient';
-import { getAdmin } from '@server/firebaseAdmin';
-const admin = getAdmin();
+import { sendPushNotification } from '../../services/pushService';
 
 export async function updateOrderStatus(orderId: string, status: string) {
   const order = await (prisma as any).order?.update({
@@ -9,12 +8,17 @@ export async function updateOrderStatus(orderId: string, status: string) {
     include: { user: true },
   });
 
-  if (order?.user?.fcmToken) {
-    await admin.messaging().send({
+  if (order?.user?.id) {
+    await sendPushNotification({
+      userId: order.user.id,
       token: order.user.fcmToken,
       notification: {
         title: 'Order Update',
         body: `Your order ${order.id} is now ${status}.`,
+      },
+      data: {
+        orderId: order.id,
+        status,
       },
     });
   }

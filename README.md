@@ -32,6 +32,32 @@ A premium React Native mobile app for Jars Cannabis, designed to deliver an awar
 - Age gating, geofencing, and full legal compliance
 - Award-winning user experience with advanced haptics, animations, and accessibility
 
+## 🧭 Buyer Onboarding Playbook
+
+1. **Account & Access handoff**
+   - Ensure invites have been accepted for GitHub, Expo, Firebase, Stripe, Sentry, hosting (Railway/Render), and analytics dashboards.
+   - Store production secrets exclusively in the platform secret managers; reference the canonical list in `.env.example` and `backend/.env.example`.
+2. **Local environment setup (≈10 minutes)**
+   - Install Node 20 LTS (`nvm use 20.18`) and run `./setup.sh` to install root + backend dependencies, generate Prisma client, and verify toolchains.
+   - Copy env templates: `cp .env.example .env` and `cp backend/.env.example backend/.env`, then fill in API URLs, Firebase keys, and Stripe sandbox credentials.
+   - Optional but recommended: start Redis locally (Docker compose) to exercise rate limiting, caching, and push backoff logic.
+3. **Running the stack**
+   - Backend: `npm run dev:backend` (or `npm --prefix backend run dev`) boots Express on `http://localhost:3000` with health probes at `/api/v1/health` and `/api/v1/ready`.
+   - Mobile: `npm run start` (Expo) for the dev menu, or `npm run ios` / `npm run android` for platform targets. Point `EXPO_PUBLIC_API_BASE_URL` to your backend URL.
+4. **Quality gates before merging/deploying**
+   - `npm run lint`, `npm run typecheck`, `npm test`, `npm --prefix backend run test:ci`, and `npm run smoke` (Postman collection) must all pass.
+   - For release tags, also run `npm run test:e2e:smoke` (Detox) and build store binaries via `eas build --profile production --platform ios|android`.
+5. **Deployment quick reference**
+   - Backend release workflow + rollbacks live in `PRODUCTION_READINESS.md` and `PRODUCTION_DEPLOYMENT.md`.
+   - Mobile release checklist (version bumps, OTA strategy, store submission) also described there.
+6. **Documentation map**
+   - `ARCHITECTURE.md`: systems overview and request lifecycle.
+   - `API_CONTRACT.md`: high-level endpoint catalog linked to `backend/openapi.yaml`.
+   - `SECURITY_NOTES.md`: current threat model + rotation policies.
+   - `docs/` directory: historical audits, QA guides, and per-feature implementation notes.
+
+Completing the steps above gives buyers a fully reproducible environment and clear launch path.
+
 ## 🚀 One-Click Deployment
 
 Get the complete backend running with Docker Compose:
@@ -102,6 +128,12 @@ This project uses a monorepo structure with flexible package management:
 - **Firebase Test Lab**: Automated Robo testing for Android preview builds (when secrets available)
 - **Appetize.io**: Automated iOS simulator upload for shareable preview links
 - **Fork-Safe**: All secret-dependent steps skip gracefully for external contributors
+
+#### Secrets needed for the e2e smoke workflow
+
+- `EXPO_TOKEN` is required for the Expo/EAS build step.
+- `GCP_PROJECT_ID` **and** `GCP_SA_KEY_JSON` unlock the Firebase Test Lab Robo run. Without them, the workflow falls back to a slower ARM emulator + Detox path.
+- Details live in `docs/ci.md` for quick reference.
 
 **Installation Commands:**
 
@@ -258,7 +290,7 @@ When deploying the backend (for example on Railway/Render), the following variab
 
 Required in production:
 
-- JWT_SECRET: cryptographically strong secret, at least 32 characters (used to sign/verify JWTs)
+- JWT_SECRET: cryptographically strong secret, at least 32 characters and must contain lowercase, uppercase, numeric, and symbol characters (used to sign/verify JWTs)
 - DATABASE_URL: database connection string (e.g., Postgres)
 - FIREBASE_PROJECT_ID: Firebase project ID
 - FIREBASE_SERVICE_ACCOUNT_BASE64: base64-encoded Firebase service account JSON
@@ -273,6 +305,10 @@ Optional (defaults exist):
 - WEATHER_API_URL: default https://api.openweathermap.org/data/2.5
 - WEATHER_CACHE_TTL_MS: default 300000 (5 minutes)
 - DEBUG_DIAG: '0' or '1'
+- EXTERNAL_API_TIMEOUT_MS: default 5000 (ms)
+- RATE_LIMIT_WINDOW_MS: default 60000 (1 minute)
+- RATE_LIMIT_MAX_REQUESTS: default 60 requests per window
+- RATE_LIMIT_BLOCK_SECONDS: default 60 seconds to block abusive clients in Redis
 
 Generate a strong JWT secret (copy the output and set JWT_SECRET):
 

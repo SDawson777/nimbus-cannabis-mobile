@@ -19,30 +19,50 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20.19.4'
-          cache: 'yarn'
+          cache: 'npm'
           cache-dependency-path: |
-            yarn.lock
+            npm-shrinkwrap.json
 
-      - name: 🔍 Preflight - Verify lockfiles exist
+      - name: 🔍 Preflight - Verify npm lockfiles exist
         run: |
-          if [ -f package-lock.json ] || [ -f npm-shrinkwrap.json ]; then
-            echo '❌ Detected npm lockfile. Project is Yarn-only.'
+          if [ ! -f npm-shrinkwrap.json ]; then
+            echo '❌ Missing npm-shrinkwrap.json. Run `npm shrinkwrap` locally.'
             exit 1
           fi
-
-          if [ ! -f yarn.lock ]; then
-            echo '❌ Missing yarn.lock. Cannot guarantee reproducible installs.'
+          if [ ! -f backend/package-lock.json ]; then
+            echo '❌ Missing backend/package-lock.json. Run `npm --prefix backend install --package-lock-only`.'
             exit 1
           fi
-
-          echo '✅ Yarn lockfile verified.'
+          echo '✅ npm lockfiles verified.'
 
       - name: Install deps (root)
-        run: yarn install --frozen-lockfile
+        run: npm ci
 
       - name: Install deps (backend)
-        run: yarn install --frozen-lockfile
-        working-directory: backend
+        run: npm --prefix backend ci
+
+      - name: Prepare Android SDK cache directories
+        run: |
+          sudo mkdir -p /usr/lib/android-sdk/{platforms,build-tools,emulator,platform-tools,system-images}
+          sudo chown -R $USER:$(id -gn) /usr/lib/android-sdk
+          mkdir -p ~/.android/avd
+
+      - name: Cache Android SDK components
+        uses: actions/cache@v4
+        with:
+          path: |
+            /usr/lib/android-sdk/platforms
+            /usr/lib/android-sdk/build-tools
+            /usr/lib/android-sdk/emulator
+            /usr/lib/android-sdk/platform-tools
+            /usr/lib/android-sdk/system-images
+          key: ${{ runner.os }}-android-sdk-${{ hashFiles('.github/workflows/e2e-smoke.yml') }}
+
+      - name: Cache Android AVD (optional)
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/avd
+          key: ${{ runner.os }}-android-avd-${{ hashFiles('.github/workflows/e2e-smoke.yml', 'e2e/detox.config.js') }}
 
       # Build APK with EAS
       - name: Expo/EAS auth (npm only)
@@ -57,10 +77,15 @@ jobs:
           patch-watchers: true
 
       - name: Write google-services.json
-        if: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 != '' }}
+        env:
+          GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
         run: |
+          if [ -z "$GOOGLE_SERVICES_JSON_BASE64" ]; then
+            echo "GOOGLE_SERVICES_JSON_BASE64 not set; skipping google-services.json creation"
+            exit 0
+          fi
           mkdir -p ./apps/android
-          echo "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" | base64 --decode > ./apps/android/google-services.json
+          echo "$GOOGLE_SERVICES_JSON_BASE64" | base64 --decode > ./apps/android/google-services.json
 
       - name: Run expo prebuild (Android)
         run: npx expo prebuild --platform android --clean --no-install
@@ -119,14 +144,16 @@ jobs:
       - name: Upload APK to Appetize (API fallback)
         # Don't reference secrets in the conditional; check at runtime and skip if missing
         if: ${{ github.event.pull_request == null || github.event.pull_request.head.repo.fork == false }}
+        env:
+          APPETIZE_API_TOKEN: ${{ secrets.APPETIZE_API_TOKEN }}
         run: |
           set -euo pipefail
-          if [ -z "${{ secrets.APPETIZE_API_TOKEN }}" ]; then
+          if [ -z "$APPETIZE_API_TOKEN" ]; then
             echo "APPETIZE_API_TOKEN not set; skipping API fallback upload"
             exit 0
           fi
           RESPONSE=$(curl -sS https://api.appetize.io/v1/apps \
-            -u "${{ secrets.APPETIZE_API_TOKEN }}:" \
+            -u "$APPETIZE_API_TOKEN:" \
             -F "file=@app-release.apk" \
             -F "platform=android")
           PUB=$(echo "$RESPONSE" | jq -r '.publicKey // .data.publicKey // .app.publicKey // empty')
@@ -138,9 +165,11 @@ jobs:
 
       - name: Appetize links
         if: ${{ github.event.pull_request == null || github.event.pull_request.head.repo.fork == false }}
+        env:
+          APPETIZE_PUBLIC_KEY_SECRET: ${{ secrets.APPETIZE_PUBLIC_KEY }}
         run: |
           # Prefer an explicit APPETIZE_PUBLIC_KEY secret (stable), otherwise use PUBLIC_KEY set by API upload
-          PUB="${{ secrets.APPETIZE_PUBLIC_KEY || '' }}"
+          PUB="$APPETIZE_PUBLIC_KEY_SECRET"
           if [ -z "$PUB" ]; then
             PUB="$PUBLIC_KEY"
           fi
@@ -155,26 +184,29 @@ jobs:
 
       - name: Typecheck & lint (root)
         run: |
-          yarn typecheck
-          yarn lint
+          npm run typecheck
+          npm run lint
 
       - name: Typecheck & lint (backend)
         run: |
-          yarn typecheck || true
-          yarn lint || true
+          npm run typecheck || true
+          npm run lint || true
         working-directory: backend
 
       - name: Firebase Test Lab Robo smoke
         # Do a runtime check for GCP secrets to avoid using secrets in the workflow expression
+        env:
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          GCP_SA_KEY_JSON: ${{ secrets.GCP_SA_KEY_JSON }}
         run: |
           set -euo pipefail
-          if [ -z "${{ secrets.GCP_PROJECT_ID }}" ] || [ -z "${{ secrets.GCP_SA_KEY_JSON }}" ]; then
+          if [ -z "$GCP_PROJECT_ID" ] || [ -z "$GCP_SA_KEY_JSON" ]; then
             echo "GCP_PROJECT_ID or GCP_SA_KEY_JSON not set; skipping Firebase Test Lab run"
             exit 0
           fi
-          echo "${{ secrets.GCP_SA_KEY_JSON }}" > /tmp/gcloud_key.json
+          echo "$GCP_SA_KEY_JSON" > /tmp/gcloud_key.json
           gcloud auth activate-service-account --key-file=/tmp/gcloud_key.json
-          gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+          gcloud config set project "$GCP_PROJECT_ID"
           gcloud firebase test android run \
             --type robo \
             --app app-release.apk \
@@ -184,9 +216,13 @@ jobs:
       # Emulator fallback when FTL secrets are not present
       - name: Install Android SDK & tools (for emulator fallback)
         # This step will check at runtime whether GCP secrets are present; if they are, it will skip.
+        env:
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          GCP_SA_KEY_JSON: ${{ secrets.GCP_SA_KEY_JSON }}
+          ADB_INSTALL_TIMEOUT: 120000
         run: |
           set -euo pipefail
-          if [ -n "${{ secrets.GCP_PROJECT_ID }}" ] && [ -n "${{ secrets.GCP_SA_KEY_JSON }}" ]; then
+          if [ -n "$GCP_PROJECT_ID" ] && [ -n "$GCP_SA_KEY_JSON" ]; then
             echo "GCP secrets present; skipping emulator fallback SDK install"
             exit 0
           fi
@@ -200,13 +236,14 @@ jobs:
           unzip -q cmdline.zip -d /tmp
           mv /tmp/cmdline-tools "$ANDROID_SDK_ROOT/cmdline-tools/latest" || true
           yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_SDK_ROOT" "platform-tools" "platforms;android-34" "system-images;android-34;google_apis;arm64-v8a" "emulator"
-        env:
-          ADB_INSTALL_TIMEOUT: 120000
 
       - name: Create and configure AVD (fallback)
+        env:
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          GCP_SA_KEY_JSON: ${{ secrets.GCP_SA_KEY_JSON }}
         run: |
           set -euo pipefail
-          if [ -n "${{ secrets.GCP_PROJECT_ID }}" ] && [ -n "${{ secrets.GCP_SA_KEY_JSON }}" ]; then
+          if [ -n "$GCP_PROJECT_ID" ] && [ -n "$GCP_SA_KEY_JSON" ]; then
             echo "GCP secrets present; skipping AVD creation"
             exit 0
           fi
@@ -228,9 +265,11 @@ jobs:
         env:
           AVD_NAME: ci_arm64_avd
           ANDROID_HOME: /usr/lib/android-sdk
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          GCP_SA_KEY_JSON: ${{ secrets.GCP_SA_KEY_JSON }}
         run: |
           set -euo pipefail
-          if [ -n "${{ secrets.GCP_PROJECT_ID }}" ] && [ -n "${{ secrets.GCP_SA_KEY_JSON }}" ]; then
+          if [ -n "$GCP_PROJECT_ID" ] && [ -n "$GCP_SA_KEY_JSON" ]; then
             echo "GCP secrets present; skipping emulator boot"
             exit 0
           fi
@@ -253,15 +292,14 @@ jobs:
         run: CI=1 npx expo export --platform web || echo "⚠️  Web export not available in this Expo configuration"
 
       - name: 🏗 Build app for E2E
-        run: yarn build:e2e:android
+        run: npm run build:e2e:android
         env:
           EXPO_PUBLIC_API_BASE_URL: http://10.0.2.2:3000/api/v1
           CI: true
 
       - name: 🚀 Start backend server
         run: |
-          yarn install --frozen-lockfile
-          yarn start &
+          npm run start &
           timeout 30 bash -c 'until curl -f http://localhost:3000/api/v1/health; do sleep 1; done'
         working-directory: backend
         env:
@@ -273,7 +311,7 @@ jobs:
           FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID || 'test-project' }}
 
       - name: 🧪 Run Detox E2E tests
-        run: yarn test:e2e:android
+        run: npm run test:e2e:android
         env:
           DETOX_CONFIGURATION: android.emu.debug
           EXPO_PUBLIC_API_BASE_URL: http://10.0.2.2:3000/api/v1

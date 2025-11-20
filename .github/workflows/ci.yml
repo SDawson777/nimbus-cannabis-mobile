@@ -19,40 +19,42 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Yarn (use system default)
-        run: |
-          echo "Using system Yarn version for compatibility"
-          yarn --version
-      - name: Use Node 20.19.4
+      - name: Setup Node 20.19.4 (npm cache)
         uses: actions/setup-node@v4
         with:
           node-version: 20.19.4
-          cache: 'yarn'
-          cache-dependency-path: yarn.lock
-      - name: Print Node & Yarn versions
+          cache: 'npm'
+          cache-dependency-path: |
+            npm-shrinkwrap.json
+            backend/package-lock.json
+      - name: Print Node & npm versions
         run: |
           echo "Runner versions"
           node --version || true
-          yarn --version || true
-      - name: Ensure only Yarn is used
+          npm --version || true
+      - name: 🔍 Verify npm lockfiles exist
         run: |
-          if [ -f package-lock.json ] || [ -f npm-shrinkwrap.json ]; then
-            echo '❌ Detected npm lockfile. Project is Yarn-only.'; exit 1;
+          if [ ! -f npm-shrinkwrap.json ]; then
+            echo '❌ Missing npm-shrinkwrap.json. Run `npm shrinkwrap` locally.'
+            exit 1
           fi
-          if [ ! -f yarn.lock ]; then
-            echo '❌ Missing yarn.lock. Cannot guarantee reproducible installs.'; exit 1;
+          if [ ! -f backend/package-lock.json ]; then
+            echo '❌ Missing backend/package-lock.json. Run `npm --prefix backend install --package-lock-only`.'
+            exit 1
           fi
-          echo '✅ Yarn lockfile verified.'
-      - name: Install dependencies (Yarn)
-        run: yarn install --frozen-lockfile
+          echo '✅ npm lockfiles verified.'
+      - name: Install dependencies (root)
+        run: npm ci
+      - name: Install dependencies (backend)
+        run: npm --prefix backend ci
       - name: Typecheck
-        run: yarn typecheck
+        run: npm run typecheck
       - name: Lint
-        run: yarn lint
+        run: npm run lint
       - name: Prettier formatting check
-        run: yarn format:check
+        run: npm run format:check
       - name: Run tests
-        run: yarn test -- --ci --passWithNoTests
+        run: npm test -- --ci --passWithNoTests
 
   build-android-preview:
     needs: test
@@ -70,22 +72,34 @@ jobs:
       EXPO_ANDROID_KEY_PASSWORD: ${{ secrets.EXPO_ANDROID_KEY_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Yarn (use system default)
-        run: |
-          echo "Using system Yarn version for compatibility"
-          yarn --version
-      - uses: actions/setup-node@v4
+      - name: Setup Node 20.19.4 (npm cache)
+        uses: actions/setup-node@v4
         with:
           node-version: 20.19.4
-          cache: 'yarn'
-          cache-dependency-path: yarn.lock
-      - name: Print Node & Yarn versions
+          cache: 'npm'
+          cache-dependency-path: |
+            npm-shrinkwrap.json
+            backend/package-lock.json
+      - name: Print Node & npm versions
         run: |
           echo "Runner versions"
           node --version || true
-          yarn --version || true
-      - name: Install dependencies (Yarn)
-        run: yarn install --frozen-lockfile
+          npm --version || true
+      - name: 🔍 Verify npm lockfiles exist
+        run: |
+          if [ ! -f npm-shrinkwrap.json ]; then
+            echo '❌ Missing npm-shrinkwrap.json. Run `npm shrinkwrap` locally.'
+            exit 1
+          fi
+          if [ ! -f backend/package-lock.json ]; then
+            echo '❌ Missing backend/package-lock.json. Run `npm --prefix backend install --package-lock-only`.'
+            exit 1
+          fi
+          echo '✅ npm lockfiles verified.'
+      - name: Install dependencies (root)
+        run: npm ci
+      - name: Install dependencies (backend)
+        run: npm --prefix backend ci
 
       - name: Ensure EAS secret GOOGLE_SERVICES_JSON_BASE64
         if: ${{ env.GOOGLE_SERVICES_JSON_BASE64 != '' }}
@@ -232,22 +246,34 @@ jobs:
       GOOGLESERVICE_PLIST_BASE64: ${{ secrets.GOOGLESERVICE_PLIST_BASE64 }}
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Yarn (use system default)
-        run: |
-          echo "Using system Yarn version for compatibility"
-          yarn --version
-      - uses: actions/setup-node@v4
+      - name: Setup Node 20.19.4 (npm cache)
+        uses: actions/setup-node@v4
         with:
           node-version: 20.19.4
-          cache: 'yarn'
-          cache-dependency-path: yarn.lock
-      - name: Print Node & Yarn versions
+          cache: 'npm'
+          cache-dependency-path: |
+            npm-shrinkwrap.json
+            backend/package-lock.json
+      - name: Print Node & npm versions
         run: |
           echo "Runner versions"
           node --version || true
-          yarn --version || true
-      - name: Install dependencies (Yarn)
-        run: yarn install --frozen-lockfile
+          npm --version || true
+      - name: 🔍 Verify npm lockfiles exist
+        run: |
+          if [ ! -f npm-shrinkwrap.json ]; then
+            echo '❌ Missing npm-shrinkwrap.json. Run `npm shrinkwrap` locally.'
+            exit 1
+          fi
+          if [ ! -f backend/package-lock.json ]; then
+            echo '❌ Missing backend/package-lock.json. Run `npm --prefix backend install --package-lock-only`.'
+            exit 1
+          fi
+          echo '✅ npm lockfiles verified.'
+      - name: Install dependencies (root)
+        run: npm ci
+      - name: Install dependencies (backend)
+        run: npm --prefix backend ci
 
       - name: Verify iOS Podfile exists (fail early)
         run: |

@@ -14,33 +14,37 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: 🔍 Preflight - Verify lockfiles exist
+      - name: 🔍 Preflight - Verify npm lockfiles exist
         run: |
-          if [ -f package-lock.json ] || [ -f npm-shrinkwrap.json ]; then
-            echo '❌ Detected npm lockfile. Project is Yarn-only.'
+          if [ ! -f npm-shrinkwrap.json ]; then
+            echo '❌ Missing npm-shrinkwrap.json. Run `npm shrinkwrap` locally.'
             exit 1
           fi
 
-          if [ ! -f yarn.lock ]; then
-            echo '❌ Missing yarn.lock. Cannot guarantee reproducible installs.'
+          if [ ! -f backend/package-lock.json ]; then
+            echo '❌ Missing backend/package-lock.json. Run `npm --prefix backend install --package-lock-only`.'
             exit 1
           fi
 
-          echo '✅ Yarn lockfile verified.'
+          echo '✅ npm lockfiles verified.'
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '20.19.4'
-          cache: 'yarn'
+          cache: 'npm'
           cache-dependency-path: |
-            yarn.lock
+            npm-shrinkwrap.json
+            backend/package-lock.json
 
-      - name: Install dependencies (Yarn)
-        run: yarn install --frozen-lockfile
+      - name: Install dependencies (root)
+        run: npm ci
+
+      - name: Install dependencies (backend)
+        run: npm --prefix backend ci
 
       - name: Lint
-        run: yarn lint
+        run: npm run lint
 
       - name: Format
-        run: yarn format:ci
+        run: npm run format:ci

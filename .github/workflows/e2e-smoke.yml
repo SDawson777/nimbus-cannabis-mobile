@@ -233,9 +233,28 @@ jobs:
           sudo apt-get install -y openjdk-11-jdk unzip
           curl -sS https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -o cmdline.zip
           mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools"
-          unzip -q cmdline.zip -d /tmp
-          mv /tmp/cmdline-tools "$ANDROID_SDK_ROOT/cmdline-tools/latest" || true
-          yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_SDK_ROOT" "platform-tools" "platforms;android-34" "system-images;android-34;google_apis;arm64-v8a" "emulator"
+          TMP_CLT_DIR=$(mktemp -d)
+          unzip -q cmdline.zip -d "$TMP_CLT_DIR"
+          rm -rf "$ANDROID_SDK_ROOT/cmdline-tools/latest"
+          mv "$TMP_CLT_DIR/cmdline-tools" "$ANDROID_SDK_ROOT/cmdline-tools/latest"
+          SDKMANAGER_BIN="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -x "$SDKMANAGER_BIN" ]; then
+            echo "❌ sdkmanager binary not found at $SDKMANAGER_BIN"
+            ls -R "$ANDROID_SDK_ROOT/cmdline-tools" || true
+            exit 1
+          fi
+          set +o pipefail
+          yes | "$SDKMANAGER_BIN" --sdk_root="$ANDROID_SDK_ROOT" \
+            "platform-tools" \
+            "platforms;android-34" \
+            "system-images;android-34;google_apis;arm64-v8a" \
+            "emulator"
+          SDK_EXIT=${PIPESTATUS[1]}
+          set -o pipefail
+          if [ $SDK_EXIT -ne 0 ]; then
+            echo "❌ sdkmanager failed with exit code $SDK_EXIT"
+            exit $SDK_EXIT
+          fi
 
       - name: Create and configure AVD (fallback)
         env:

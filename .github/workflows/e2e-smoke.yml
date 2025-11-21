@@ -266,11 +266,26 @@ jobs:
             echo "GCP secrets present; skipping AVD creation"
             exit 0
           fi
+          export ANDROID_SDK_ROOT="/usr/lib/android-sdk"
           export ANDROID_AVD_HOME="$HOME/.android/avd"
           mkdir -p "${ANDROID_AVD_HOME}"
           AVD_NAME="ci_arm64_avd"
           export AVD_NAME
-          echo "no" | avdmanager create avd --force --name "${AVD_NAME}" --package "system-images;android-34;google_apis;arm64-v8a" --tag "google_apis" --abi "arm64-v8a" --device "Nexus 5"
+          CMDLINE_TOOLS_BIN="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin"
+          AVDMANAGER_BIN="$CMDLINE_TOOLS_BIN/avdmanager"
+          if [ ! -x "$AVDMANAGER_BIN" ]; then
+            echo "❌ avdmanager not found at $AVDMANAGER_BIN"
+            ls -R "$CMDLINE_TOOLS_BIN/.." || true
+            exit 1
+          fi
+          set +o pipefail
+          printf 'no\n' | "$AVDMANAGER_BIN" create avd --force --name "${AVD_NAME}" --package "system-images;android-34;google_apis;arm64-v8a" --tag "google_apis" --abi "arm64-v8a" --device "Nexus 5"
+          AVD_EXIT=${PIPESTATUS[1]}
+          set -o pipefail
+          if [ $AVD_EXIT -ne 0 ]; then
+            echo "❌ avdmanager failed with exit code $AVD_EXIT"
+            exit $AVD_EXIT
+          fi
           AVD_DIR="$ANDROID_AVD_HOME/${AVD_NAME}.avd"
           {
             echo "hw.accel=off"

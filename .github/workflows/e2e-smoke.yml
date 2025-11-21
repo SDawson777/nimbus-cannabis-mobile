@@ -307,20 +307,48 @@ jobs:
             echo "GCP secrets present; skipping emulator boot"
             exit 0
           fi
-          "${ANDROID_HOME}/emulator/emulator" -avd "${AVD_NAME}" -no-window -no-snapshot -gpu swiftshader_indirect -no-audio -no-boot-anim -no-metrics -camera-back none -camera-front none -selinux permissive -qemu -m 3072 > emulator.log 2>&1 &
-          "${ANDROID_HOME}/platform-tools/adb" wait-for-device
-          deadline=$((SECONDS + 720))
-          until "${ANDROID_HOME}/platform-tools/adb" shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' | grep -q '^1$'; do
+          export ANDROID_SDK_ROOT="${ANDROID_HOME}"
+          export PATH="$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$PATH"
+          EMULATOR_BIN="$ANDROID_HOME/emulator/emulator"
+          ADB_BIN="$ANDROID_HOME/platform-tools/adb"
+          if [ ! -x "$EMULATOR_BIN" ]; then
+            echo "❌ Emulator binary not found at $EMULATOR_BIN"
+            ls -R "$ANDROID_HOME/emulator" || true
+            exit 1
+          fi
+          if [ ! -x "$ADB_BIN" ]; then
+            echo "❌ adb binary not found at $ADB_BIN"
+            ls -R "$ANDROID_HOME/platform-tools" || true
+            exit 1
+          fi
+          $ADB_BIN kill-server || true
+          $ADB_BIN start-server
+          "$EMULATOR_BIN" -avd "${AVD_NAME}" -no-window -no-snapshot -gpu swiftshader_indirect -no-audio -no-boot-anim -no-metrics -camera-back none -camera-front none -selinux permissive -no-accel -qemu -m 3072 > emulator.log 2>&1 &
+          EMULATOR_PID=$!
+          trap 'kill $EMULATOR_PID || true' EXIT
+          deadline=$((SECONDS + 900))
+          until $ADB_BIN wait-for-device >/dev/null 2>&1; do
             if (( SECONDS > deadline )); then
-              echo "❌ Emulator did not finish booting within 12 minutes"
+              echo "❌ adb did not detect the emulator within 15 minutes"
               tail -n 200 emulator.log || true
+              kill $EMULATOR_PID || true
+              exit 1
+            fi
+            echo "…waiting for adb to detect emulator ($((${deadline}-SECONDS))s left)"
+            sleep 5
+          done
+          until $ADB_BIN shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' | grep -q '^1$'; do
+            if (( SECONDS > deadline )); then
+              echo "❌ Emulator did not finish booting before deadline"
+              tail -n 200 emulator.log || true
+              kill $EMULATOR_PID || true
               exit 1
             fi
             echo "…waiting for Android to boot ($((${deadline}-SECONDS))s left)"
             sleep 10
           done
-          "${ANDROID_HOME}/platform-tools/adb" shell input keyevent 82 || true
-          "${ANDROID_HOME}/platform-tools/adb" devices
+          $ADB_BIN shell input keyevent 82 || true
+          $ADB_BIN devices
 
       - name: 🌐 Expo Web export test
         run: CI=1 npx expo export --platform web || echo "⚠️  Web export not available in this Expo configuration"

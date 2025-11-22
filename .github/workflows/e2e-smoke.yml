@@ -321,34 +321,64 @@ jobs:
             ls -R "$ANDROID_HOME/platform-tools" || true
             exit 1
           fi
-          $ADB_BIN kill-server || true
-          $ADB_BIN start-server
-          "$EMULATOR_BIN" -avd "${AVD_NAME}" -no-window -no-snapshot -gpu swiftshader_indirect -no-audio -no-boot-anim -no-metrics -camera-back none -camera-front none -selinux permissive -no-accel -qemu -m 3072 > emulator.log 2>&1 &
-          EMULATOR_PID=$!
-          trap 'kill $EMULATOR_PID || true' EXIT
-          deadline=$((SECONDS + 900))
-          until $ADB_BIN wait-for-device >/dev/null 2>&1; do
-            if (( SECONDS > deadline )); then
-              echo "❌ adb did not detect the emulator within 15 minutes"
-              tail -n 200 emulator.log || true
-              kill $EMULATOR_PID || true
-              exit 1
+          STATE_DIR="$RUNNER_TEMP/emulator-fallback"
+          mkdir -p "$STATE_DIR"
+          LOG_FILE="$STATE_DIR/emulator.log"
+          PID_FILE="$STATE_DIR/pid"
+          MAX_ATTEMPTS=2
+          attempt=1
+          launch_emulator() {
+            rm -f "$LOG_FILE"
+            "$ADB_BIN" kill-server || true
+            "$ADB_BIN" start-server
+            "$EMULATOR_BIN" -avd "${AVD_NAME}" -no-window -no-snapshot -gpu swiftshader_indirect -no-audio -no-boot-anim -no-metrics -camera-back none -camera-front none -selinux permissive -no-accel -ports 5554,5555 -writable-system -qemu -m 3072 > "$LOG_FILE" 2>&1 &
+            EMULATOR_PID=$!
+            echo $EMULATOR_PID > "$PID_FILE"
+          }
+          wait_for_boot() {
+            local deadline=$((SECONDS + 900))
+            until "$ADB_BIN" wait-for-device >/dev/null 2>&1; do
+              if (( SECONDS > deadline )); then
+                echo "❌ adb did not detect the emulator within 15 minutes"
+                tail -n 200 "$LOG_FILE" || true
+                return 1
+              fi
+              echo "…waiting for adb to detect emulator ($((${deadline}-SECONDS))s left)"
+              sleep 5
+            done
+            until "$ADB_BIN" shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' | grep -q '^1$'; do
+              if (( SECONDS > deadline )); then
+                echo "❌ Emulator did not finish booting before deadline"
+                tail -n 200 "$LOG_FILE" || true
+                return 1
+              fi
+              echo "…waiting for Android to boot ($((${deadline}-SECONDS))s left)"
+              sleep 10
+            done
+            return 0
+          }
+          while (( attempt <= MAX_ATTEMPTS )); do
+            echo "⚙️  Starting emulator attempt $attempt/$MAX_ATTEMPTS"
+            launch_emulator
+            if wait_for_boot; then
+              echo "✅ Emulator booted successfully"
+              "$ADB_BIN" shell input keyevent 82 || true
+              "$ADB_BIN" devices
+              break
             fi
-            echo "…waiting for adb to detect emulator ($((${deadline}-SECONDS))s left)"
-            sleep 5
-          done
-          until $ADB_BIN shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' | grep -q '^1$'; do
-            if (( SECONDS > deadline )); then
-              echo "❌ Emulator did not finish booting before deadline"
-              tail -n 200 emulator.log || true
-              kill $EMULATOR_PID || true
-              exit 1
+            echo "⚠️  Emulator attempt $attempt failed; retrying"
+            if [ -f "$PID_FILE" ]; then
+              kill "$(cat "$PID_FILE")" || true
+              rm -f "$PID_FILE"
             fi
-            echo "…waiting for Android to boot ($((${deadline}-SECONDS))s left)"
-            sleep 10
+            attempt=$((attempt + 1))
+            sleep 15
           done
-          $ADB_BIN shell input keyevent 82 || true
-          $ADB_BIN devices
+          if (( attempt > MAX_ATTEMPTS )); then
+            echo "❌ Emulator failed after $MAX_ATTEMPTS attempts"
+            exit 1
+          fi
+          echo "Emulator PID recorded in $PID_FILE for later cleanup"
 
       - name: 🌐 Expo Web export test
         run: CI=1 npx expo export --platform web || echo "⚠️  Web export not available in this Expo configuration"
@@ -377,6 +407,31 @@ jobs:
         env:
           DETOX_CONFIGURATION: android.emu.debug
           EXPO_PUBLIC_API_BASE_URL: http://10.0.2.2:3000/api/v1
+
+      - name: Shutdown emulator (fallback)
+        if: always()
+        env:
+          ANDROID_HOME: /usr/lib/android-sdk
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          GCP_SA_KEY_JSON: ${{ secrets.GCP_SA_KEY_JSON }}
+        run: |
+          set -euo pipefail
+          if [ -n "$GCP_PROJECT_ID" ] && [ -n "$GCP_SA_KEY_JSON" ]; then
+            echo "GCP secrets present; emulator fallback not used"
+            exit 0
+          fi
+          STATE_DIR="$RUNNER_TEMP/emulator-fallback"
+          PID_FILE="$STATE_DIR/pid"
+          ADB_BIN="$ANDROID_HOME/platform-tools/adb"
+          if [ -f "$PID_FILE" ]; then
+            EMU_PID=$(cat "$PID_FILE")
+            echo "🔻 Shutting down fallback emulator (pid $EMU_PID)"
+            kill "$EMU_PID" || true
+            sleep 5
+          else
+            echo "No emulator pid file found; nothing to shutdown"
+          fi
+          "$ADB_BIN" kill-server || true
 
       - name: 📱 Upload test artifacts
         uses: actions/upload-artifact@v4

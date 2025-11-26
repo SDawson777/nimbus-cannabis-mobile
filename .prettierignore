@@ -6,6 +6,7 @@ build
 coverage
 **/.expo
 **/.expo-shared
+**/npm-shrinkwrap.json
 **/package-lock.json
 **/yarn.lock
 ios/Pods/

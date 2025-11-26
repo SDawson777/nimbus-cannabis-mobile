@@ -44,7 +44,7 @@ jobs:
           fi
           echo '✅ npm lockfiles verified.'
       - name: Install dependencies (root)
-        run: npm ci
+        run: npm install --no-audit --no-fund
       - name: Install dependencies (backend)
         run: npm --prefix backend ci
       - name: Typecheck
@@ -97,7 +97,7 @@ jobs:
           fi
           echo '✅ npm lockfiles verified.'
       - name: Install dependencies (root)
-        run: npm ci
+        run: npm install --no-audit --no-fund
       - name: Install dependencies (backend)
         run: npm --prefix backend ci
 

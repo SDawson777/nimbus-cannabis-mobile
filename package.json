@@ -265,7 +265,8 @@
     },
     "react-native-skeleton-placeholder": {
       "@react-native-masked-view/masked-view": "0.3.2"
-    }
+    },
+    "picomatch": "^4.0.3"
   },
   "resolutions": {
     "superstatic": "^10.0.0"

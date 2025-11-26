@@ -36,7 +36,7 @@ jobs:
           echo '✅ npm lockfiles verified.'
 
       - name: Install deps (root)
-        run: npm install --no-audit --no-fund
+        run: npm ci
 
       - name: Install deps (backend)
         run: npm --prefix backend ci

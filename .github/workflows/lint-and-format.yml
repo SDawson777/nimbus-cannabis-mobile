@@ -38,7 +38,7 @@ jobs:
             backend/package-lock.json
 
       - name: Install dependencies (root)
-        run: npm install --no-audit --no-fund
+        run: npm ci
 
       - name: Install dependencies (backend)
         run: npm --prefix backend ci

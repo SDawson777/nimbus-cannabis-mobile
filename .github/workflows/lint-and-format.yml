@@ -37,11 +37,34 @@ jobs:
             npm-shrinkwrap.json
             backend/package-lock.json
 
+      - name: Verify lockfile consistency
+        run: |
+          if ! grep -q '"picomatch"' npm-shrinkwrap.json; then
+            echo "❌ Drift detected: picomatch missing in shrinkwrap."
+            echo "Re-run: npm install && npm shrinkwrap"
+            exit 1
+          fi
+
+          # Validate shrinkwrap resolves all dependencies
+          npm ls > /dev/null || {
+            echo "❌ Dependency tree mismatch"
+            exit 1
+          }
+
+          echo "✅ Lockfile consistency verified."
+
       - name: Install dependencies (root)
-        run: npm ci
+        run: npm ci --omit=optional
 
       - name: Install dependencies (backend)
-        run: npm --prefix backend ci
+        run: npm --prefix backend ci --omit=optional
+
+      - name: Check for modified lockfiles
+        run: |
+          if ! git diff --exit-code npm-shrinkwrap.json; then
+            echo "❌ Lockfile drift detected after build"
+            exit 1
+          fi
 
       - name: Lint
         run: npm run lint

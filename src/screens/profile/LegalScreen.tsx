@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
 
 export default function LegalScreen() {
   const navigation = useNavigation<NavProp>();
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
   const [selected, setSelected] = useState<string | null>(null);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
   const { data, isLoading, isError } = useLegal();
@@ -60,7 +60,7 @@ export default function LegalScreen() {
   const preferredStore = usePreferredStore((state: any) => state.preferredStore);
   const userState = preferredStore?.state?.toUpperCase() || null;
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   // Fallback for offline or error
   const offline = isError || !data;
@@ -100,16 +100,16 @@ export default function LegalScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]} testID="legal-screen">
-      <View style={[styles.header, { borderBottomColor: jarsSecondary }]}>
+      <View style={[styles.header, { borderBottomColor: brandSecondary }]}>
         <Pressable
           onPress={() => {
             hapticLight();
             navigation.goBack();
           }}
         >
-          <ChevronLeft color={jarsPrimary} size={24} />
+          <ChevronLeft color={brandPrimary} size={24} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: jarsPrimary }]}>Legal</Text>
+        <Text style={[styles.headerTitle, { color: brandPrimary }]}>Legal</Text>
         <View style={{ width: 24 }} />
       </View>
 
@@ -118,43 +118,43 @@ export default function LegalScreen() {
           <Pressable
             key={item.id}
             testID={`legal-terms-link-${item.id}`}
-            style={[styles.row, { borderBottomColor: jarsSecondary }]}
+            style={[styles.row, { borderBottomColor: brandSecondary }]}
             onPress={() => {
               hapticLight();
               setSelected(item.id);
             }}
           >
-            <Text style={[styles.label, { color: jarsPrimary }]}>{item.label}</Text>
+            <Text style={[styles.label, { color: brandPrimary }]}>{item.label}</Text>
           </Pressable>
         ))}
         <Pressable onPress={() => setShowDisclaimer(true)} style={styles.disclaimerBtn}>
-          <Text style={[styles.disclaimerLink, { color: jarsPrimary }]}>View Disclaimer</Text>
+          <Text style={[styles.disclaimerLink, { color: brandPrimary }]}>View Disclaimer</Text>
         </Pressable>
       </View>
 
       <Modal visible={!!selected} animationType="slide" onRequestClose={() => setSelected(null)}>
         <SafeAreaView style={[styles.modalContainer, { backgroundColor: bgColor }]}>
-          <View style={[styles.header, { borderBottomColor: jarsSecondary }]}>
+          <View style={[styles.header, { borderBottomColor: brandSecondary }]}>
             <Pressable onPress={() => setSelected(null)}>
-              <ChevronLeft color={jarsPrimary} size={24} />
+              <ChevronLeft color={brandPrimary} size={24} />
             </Pressable>
-            <Text style={[styles.headerTitle, { color: jarsPrimary }]}>
+            <Text style={[styles.headerTitle, { color: brandPrimary }]}>
               {LEGAL_LINKS.find(l => l.id === selected)?.label}
             </Text>
             <View style={{ width: 24 }} />
           </View>
           <ScrollView contentContainerStyle={styles.modalContent}>
             {isLoading ? (
-              <ActivityIndicator size="large" color={jarsPrimary} />
+              <ActivityIndicator size="large" color={brandPrimary} />
             ) : (
               <>
                 <RenderHTML
                   contentWidth={width - 32}
                   source={{ html: getModalContent(selected || '').html }}
-                  baseStyle={{ color: jarsSecondary, fontSize: 16 }}
+                  baseStyle={{ color: brandSecondary, fontSize: 16 }}
                 />
                 {getModalContent(selected || '').lastUpdated && (
-                  <Text style={{ color: jarsSecondary, fontSize: 12, marginTop: 12 }}>
+                  <Text style={{ color: brandSecondary, fontSize: 12, marginTop: 12 }}>
                     Last updated:{' '}
                     {new Date(
                       getModalContent(selected || '').lastUpdated as string
@@ -176,10 +176,10 @@ export default function LegalScreen() {
           <RenderHTML
             contentWidth={width - 64}
             source={{ html: stateNotice }}
-            baseStyle={{ color: jarsSecondary, fontSize: 15 }}
+            baseStyle={{ color: brandSecondary, fontSize: 15 }}
           />
           {stateNoticeLastUpdated && (
-            <Text style={{ color: jarsSecondary, fontSize: 12, marginTop: 8 }}>
+            <Text style={{ color: brandSecondary, fontSize: 12, marginTop: 8 }}>
               State notice last updated:{' '}
               {new Date(stateNoticeLastUpdated as string).toLocaleDateString()}
             </Text>

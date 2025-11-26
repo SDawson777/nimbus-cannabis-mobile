@@ -7,7 +7,7 @@ import { getJournal } from '../api/phase4Client';
 import { ThemeContext } from '../context/ThemeContext';
 
 export default function MyJarsInsightsScreen() {
-  const { jarsPrimary } = React.useContext(ThemeContext);
+  const { brandPrimary } = React.useContext(ThemeContext);
   const { data, isLoading } = useQuery({
     queryKey: ['journal'],
     // Always return a defined value, even if the API/mocks return undefined
@@ -27,7 +27,7 @@ export default function MyJarsInsightsScreen() {
   if (entries.length === 0) {
     return (
       <View style={styles.container}>
-        <Text style={[styles.title, { color: jarsPrimary }]}>Insights</Text>
+        <Text style={[styles.title, { color: brandPrimary }]}>Insights</Text>
         <Text style={styles.placeholder}>No journal data yet.</Text>
       </View>
     );
@@ -44,7 +44,7 @@ export default function MyJarsInsightsScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.title, { color: jarsPrimary }]}>Insights</Text>
+      <Text style={[styles.title, { color: brandPrimary }]}>Insights</Text>
       <Svg width={chartWidth} height={chartHeight} style={styles.chart}>
         {counts.map((d, i) => (
           <Rect
@@ -53,7 +53,7 @@ export default function MyJarsInsightsScreen() {
             y={chartHeight - (d.count / maxCount) * chartHeight}
             width={barWidth - 4}
             height={(d.count / maxCount) * chartHeight}
-            fill={jarsPrimary}
+            fill={brandPrimary}
           />
         ))}
       </Svg>

@@ -33,7 +33,7 @@ type LoginNavProp = NativeStackNavigationProp<RootStackParamList, 'Login'>;
 
 export default function LoginScreen() {
   const navigation = useNavigation<LoginNavProp>();
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
   const { signIn } = useAuth();
 
   const [email, setEmail] = useState('');
@@ -46,12 +46,12 @@ export default function LoginScreen() {
   }, []);
 
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   const glowStyle =
     colorTemp === 'warm'
       ? {
-          shadowColor: jarsPrimary,
+          shadowColor: brandPrimary,
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.3,
           shadowRadius: 8,
@@ -106,9 +106,9 @@ export default function LoginScreen() {
           }}
           style={({ pressed }) => pressed && { transform: [{ scale: 0.95 }] }}
         >
-          <ChevronLeft color={jarsPrimary} size={24} />
+          <ChevronLeft color={brandPrimary} size={24} />
         </Pressable>
-        <Text style={[styles.title, { color: jarsPrimary }]}>Log In</Text>
+        <Text style={[styles.title, { color: brandPrimary }]}>Log In</Text>
         <View style={{ width: 24 }} />
       </View>
 
@@ -117,8 +117,8 @@ export default function LoginScreen() {
           style={[
             styles.input,
             {
-              borderColor: focused === 'email' ? jarsPrimary : jarsSecondary,
-              color: jarsPrimary,
+              borderColor: focused === 'email' ? brandPrimary : brandSecondary,
+              color: brandPrimary,
             },
           ]}
           placeholder="Email"
@@ -139,8 +139,8 @@ export default function LoginScreen() {
               styles.input,
               {
                 flex: 1,
-                borderColor: focused === 'password' ? jarsPrimary : jarsSecondary,
-                color: jarsPrimary,
+                borderColor: focused === 'password' ? brandPrimary : brandSecondary,
+                color: brandPrimary,
               },
             ]}
             placeholder="Password"
@@ -161,9 +161,9 @@ export default function LoginScreen() {
             accessibilityLabel="Toggle password visibility"
           >
             {showPassword ? (
-              <EyeOff color={jarsSecondary} size={20} />
+              <EyeOff color={brandSecondary} size={20} />
             ) : (
-              <Eye color={jarsSecondary} size={20} />
+              <Eye color={brandSecondary} size={20} />
             )}
           </Pressable>
           <AnimatedShimmerOverlay />
@@ -181,7 +181,7 @@ export default function LoginScreen() {
           }}
           style={({ pressed }) => pressed && { transform: [{ scale: 0.95 }] }}
         >
-          <Text style={[styles.link, { color: jarsPrimary }]}>Forgot your password?</Text>
+          <Text style={[styles.link, { color: brandPrimary }]}>Forgot your password?</Text>
         </Pressable>
 
         <Pressable
@@ -190,7 +190,7 @@ export default function LoginScreen() {
           accessibilityHint="Submits your credentials"
           style={({ pressed }) => [
             styles.button,
-            { backgroundColor: jarsPrimary },
+            { backgroundColor: brandPrimary },
             glowStyle,
             pressed && { transform: [{ scale: 0.95 }] },
           ]}
@@ -207,7 +207,7 @@ export default function LoginScreen() {
         </Pressable>
 
         <View style={styles.footer}>
-          <Text style={[styles.disclaimer, { color: jarsSecondary }]}>
+          <Text style={[styles.disclaimer, { color: brandSecondary }]}>
             By logging in you agree to our
           </Text>
           <View style={styles.legalRow}>
@@ -219,9 +219,9 @@ export default function LoginScreen() {
                 navigation.navigate('Legal');
               }}
             >
-              <Text style={[styles.linkText, { color: jarsPrimary }]}>Terms &amp; Conditions</Text>
+              <Text style={[styles.linkText, { color: brandPrimary }]}>Terms &amp; Conditions</Text>
             </Pressable>
-            <Text style={[styles.disclaimer, { color: jarsSecondary }]}> and </Text>
+            <Text style={[styles.disclaimer, { color: brandSecondary }]}> and </Text>
             <Pressable
               accessibilityRole="link"
               accessibilityLabel="Privacy Policy"
@@ -230,7 +230,7 @@ export default function LoginScreen() {
                 navigation.navigate('Legal');
               }}
             >
-              <Text style={[styles.linkText, { color: jarsPrimary }]}>Privacy Policy</Text>
+              <Text style={[styles.linkText, { color: brandPrimary }]}>Privacy Policy</Text>
             </Pressable>
           </View>
         </View>

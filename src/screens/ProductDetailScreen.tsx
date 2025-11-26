@@ -30,7 +30,7 @@ type RoutePropType = RouteProp<RootStackParamList, 'ProductDetail'>;
 export default function ProductDetailScreen() {
   const route = useRoute<RoutePropType>();
   const { slug } = route.params;
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
   const { preferredStore } = useStore();
   const { data, isLoading, refetch, isFetching, error } = useProductDetails(
     slug,
@@ -43,7 +43,7 @@ export default function ProductDetailScreen() {
   }, []);
 
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   if (isLoading && !data) {
     return (
@@ -73,7 +73,7 @@ export default function ProductDetailScreen() {
         {selectedVariant && variants.find(v => v.id === selectedVariant)?.stock === 0 && (
           <StockAlert message="Sold Out" />
         )}
-        <Text style={[styles.name, { color: jarsPrimary }]}>{product.name}</Text>
+        <Text style={[styles.name, { color: brandPrimary }]}>{product.name}</Text>
         {variants.map(v => (
           <Pressable
             key={v.id}
@@ -81,12 +81,12 @@ export default function ProductDetailScreen() {
             disabled={v.stock === 0}
             style={[
               styles.variant,
-              selectedVariant === v.id && { borderColor: jarsPrimary },
+              selectedVariant === v.id && { borderColor: brandPrimary },
               v.stock === 0 && styles.disabled,
             ]}
           >
-            <Text style={{ color: jarsPrimary }}>{v.name}</Text>
-            <Text style={{ color: jarsSecondary }}>${v.price.toFixed(2)}</Text>
+            <Text style={{ color: brandPrimary }}>{v.name}</Text>
+            <Text style={{ color: brandSecondary }}>${v.price.toFixed(2)}</Text>
             <Animated.Text style={styles.stock} key={`${v.id}-${v.stock}`} entering={BounceIn}>
               {v.stock} in stock
             </Animated.Text>

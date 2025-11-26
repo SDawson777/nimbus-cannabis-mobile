@@ -26,9 +26,9 @@ type Preferences = {
 type ExportStatus = 'pending' | 'completed' | 'failed';
 
 export default function DataTransparencyScreen() {
-  const { colorTemp, jarsPrimary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandBackground } = useContext(ThemeContext);
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   const [exportId, setExportId] = useState<string | null>(null);
   const [status, setStatus] = useState<ExportStatus | null>(null);
@@ -123,14 +123,14 @@ export default function DataTransparencyScreen() {
           <ActivityIndicator style={styles.spinner} />
         ) : (
           <>
-            <Text style={[styles.sectionTitle, { color: jarsPrimary }]}>Data Preferences</Text>
+            <Text style={[styles.sectionTitle, { color: brandPrimary }]}>Data Preferences</Text>
 
             <View style={styles.prefRow}>
-              <Text style={{ color: jarsPrimary }}>Personalized Ads</Text>
+              <Text style={{ color: brandPrimary }}>Personalized Ads</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Button
                   title={prefs.personalizedAds ? 'On' : 'Off'}
-                  color={prefs.personalizedAds ? jarsPrimary : '#CCCCCC'}
+                  color={prefs.personalizedAds ? brandPrimary : '#CCCCCC'}
                   onPress={() => handleToggle('personalizedAds')}
                   disabled={prefLoading !== null}
                   accessibilityLabel="Toggle personalized ads"
@@ -142,11 +142,11 @@ export default function DataTransparencyScreen() {
             </View>
 
             <View style={styles.prefRow}>
-              <Text style={{ color: jarsPrimary }}>Email Tracking</Text>
+              <Text style={{ color: brandPrimary }}>Email Tracking</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Button
                   title={prefs.emailTracking ? 'On' : 'Off'}
-                  color={prefs.emailTracking ? jarsPrimary : '#CCCCCC'}
+                  color={prefs.emailTracking ? brandPrimary : '#CCCCCC'}
                   onPress={() => handleToggle('emailTracking')}
                   disabled={prefLoading !== null}
                   accessibilityLabel="Toggle email tracking"
@@ -156,11 +156,11 @@ export default function DataTransparencyScreen() {
             </View>
 
             <View style={styles.prefRow}>
-              <Text style={{ color: jarsPrimary }}>Share With Partners</Text>
+              <Text style={{ color: brandPrimary }}>Share With Partners</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Button
                   title={prefs.shareWithPartners ? 'On' : 'Off'}
-                  color={prefs.shareWithPartners ? jarsPrimary : '#CCCCCC'}
+                  color={prefs.shareWithPartners ? brandPrimary : '#CCCCCC'}
                   onPress={() => handleToggle('shareWithPartners')}
                   disabled={prefLoading !== null}
                   accessibilityLabel="Toggle share with partners"
@@ -175,7 +175,7 @@ export default function DataTransparencyScreen() {
 
         <Button
           title={loading ? 'Requesting Export...' : 'Request Data Export'}
-          color={jarsPrimary}
+          color={brandPrimary}
           onPress={requestExport}
           disabled={loading || status === 'pending'}
           accessibilityLabel="Request data export"
@@ -184,12 +184,12 @@ export default function DataTransparencyScreen() {
         {(loading || status === 'pending') && <ActivityIndicator style={styles.spinner} />}
 
         {status === 'pending' && (
-          <Text style={[styles.statusText, { color: jarsPrimary }]}>Export pending...</Text>
+          <Text style={[styles.statusText, { color: brandPrimary }]}>Export pending...</Text>
         )}
 
         {status === 'completed' && downloadUrl && (
           <Text
-            style={[styles.linkText, { color: jarsPrimary }]}
+            style={[styles.linkText, { color: brandPrimary }]}
             onPress={() => Linking.openURL(downloadUrl)}
             accessibilityLabel="Download data export"
             accessible
@@ -200,11 +200,11 @@ export default function DataTransparencyScreen() {
 
         {error && (
           <View style={styles.errorContainer}>
-            <Text style={[styles.errorText, { color: jarsPrimary }]}>Error: {error}</Text>
+            <Text style={[styles.errorText, { color: brandPrimary }]}>Error: {error}</Text>
             <Button
               title="Retry"
               onPress={requestExport}
-              color={jarsPrimary}
+              color={brandPrimary}
               accessibilityLabel="Retry export"
             />
           </View>

@@ -1,8 +1,8 @@
-# Jars Cannabis Mobile App
+# Nimbus Cannabis OS Mobile
 
 [![CI](https://github.com/SDAWSON777/jars-cannabis-mobile-app/actions/workflows/ci.yml/badge.svg)](https://github.com/SDAWSON777/jars-cannabis-mobile-app/actions)
 
-A premium React Native mobile app for Jars Cannabis, designed to deliver an award-winning, legally compliant, and highly personalized cannabis shopping experience.
+A premium white-label React Native mobile platform for cannabis retailers, designed to deliver an award-winning, legally compliant, and highly personalized cannabis shopping experience.
 
 ## 📱 Features (MVP)
 
@@ -65,7 +65,7 @@ Get the complete backend running with Docker Compose:
 ```bash
 # Clone repository
 git clone https://github.com/SDawson777/jars-cannabis-mobile-app.git
-cd jars-cannabis-mobile-app
+cd nimbus-cannabis-mobile
 
 # Configure environment
 cp .env.docker.example .env
@@ -77,9 +77,9 @@ docker-compose up
 **Backend available at**: `http://localhost:3000`  
 **Full instructions**: See [DEPLOYMENT.md](DEPLOYMENT.md)
 
-JARS Cannabis Mobile App
+Nimbus Cannabis OS Mobile
 
-A complete, premium mobile commerce solution for cannabis retail—Expo/React Native front-end with a modern Express/TypeScript backend.All core e-commerce, user, and content features built in.Production-ready. Easy to deploy. Handover ready.
+A complete, white-label mobile commerce platform for cannabis retail—Expo/React Native front-end with a modern Express/TypeScript backend. All core e-commerce, user, and content features built in. Production-ready. Easy to deploy. Fully customizable.
 
 🚀 Features
 
@@ -156,7 +156,7 @@ npm run install:all                  # Automated installation (both root and bac
 
 ```bash
 git clone https://github.com/SDawson777/jars-cannabis-mobile-app.git
-cd jars-cannabis-mobile-app
+cd nimbus-cannabis-mobile
 ```
 
 2. Install Node.js and dependencies

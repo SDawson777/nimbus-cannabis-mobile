@@ -38,7 +38,7 @@ const MENU: { id: keyof RootStackParamList; label: string }[] = [
 
 export default function ProfileScreen() {
   const navigation = useNavigation<ProfileNavProp>();
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
   const auth = useContext(AuthContext) as AuthContextType;
   const { data, clearAuth } = auth || { data: undefined, clearAuth: undefined };
 
@@ -47,7 +47,7 @@ export default function ProfileScreen() {
   }, []);
 
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   const navigateTo = (route: keyof RootStackParamList) => {
     hapticLight();
@@ -67,12 +67,12 @@ export default function ProfileScreen() {
               <Text
                 testID="profile-name"
                 accessibilityRole="text"
-                style={[styles.name, { color: jarsPrimary }]}
+                style={[styles.name, { color: brandPrimary }]}
               >
                 {' '}
                 {data?.name ?? 'Guest'}{' '}
               </Text>
-              <Text testID="profile-email" style={[styles.email, { color: jarsSecondary }]}>
+              <Text testID="profile-email" style={[styles.email, { color: brandSecondary }]}>
                 {' '}
                 {data?.email ?? ''}{' '}
               </Text>
@@ -100,12 +100,12 @@ export default function ProfileScreen() {
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
           <Pressable
-            style={[styles.row, { borderBottomColor: jarsSecondary }]}
-            android_ripple={{ color: `${jarsSecondary}20` }}
+            style={[styles.row, { borderBottomColor: brandSecondary }]}
+            android_ripple={{ color: `${brandSecondary}20` }}
             onPress={() => navigateTo(item.id)}
           >
-            <Text style={[styles.label, { color: jarsPrimary }]}>{item.label}</Text>
-            <ChevronRight color={jarsPrimary} size={20} />
+            <Text style={[styles.label, { color: brandPrimary }]}>{item.label}</Text>
+            <ChevronRight color={brandPrimary} size={20} />
           </Pressable>
         )}
       />

@@ -2,13 +2,13 @@ import { PrismaClient, ContentType, ProductCategory, StrainType } from '@prisma/
 const prisma = new PrismaClient();
 
 async function main() {
-  // Create default JARS brand
-  const jarsBrand = await prisma.brand.upsert({
-    where: { slug: 'jars' },
+  // Create default brand
+  const defaultBrand = await prisma.brand.upsert({
+    where: { slug: 'default' },
     update: {},
     create: {
-      name: 'JARS Cannabis',
-      slug: 'jars',
+      name: 'Cannabis Platform',
+      slug: 'default',
       primaryColor: '#16A34A', // Green from existing theme
       secondaryColor: '#15803D', // Darker green
       logoUrl: null, // Can be updated later
@@ -18,11 +18,11 @@ async function main() {
   // Stores
   const s1 = await prisma.store.upsert({
     where: { slug: 'scottsdale' },
-    update: { brandId: jarsBrand.id },
+    update: { brandId: defaultBrand.id },
     create: {
-      name: 'JARS Scottsdale',
+      name: 'Scottsdale Dispensary',
       slug: 'scottsdale',
-      brandId: jarsBrand.id,
+      brandId: defaultBrand.id,
       city: 'Scottsdale',
       state: 'AZ',
       latitude: 33.4942,
@@ -33,11 +33,11 @@ async function main() {
 
   const s2 = await prisma.store.upsert({
     where: { slug: 'detroit' },
-    update: { brandId: jarsBrand.id },
+    update: { brandId: defaultBrand.id },
     create: {
-      name: 'JARS Detroit',
+      name: 'Detroit Dispensary',
       slug: 'detroit',
-      brandId: jarsBrand.id,
+      brandId: defaultBrand.id,
       city: 'Detroit',
       state: 'MI',
       latitude: 42.3314,

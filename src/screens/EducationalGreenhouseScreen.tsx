@@ -33,7 +33,7 @@ type EduNavProp = NativeStackNavigationProp<RootStackParamList, 'EducationalGree
 
 export default function EducationalGreenhouseScreen() {
   const navigation = useNavigation<EduNavProp>();
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
   const { data, isLoading, isError } = useArticlesQuery();
   const { preview } = useCMSPreview();
 
@@ -42,7 +42,7 @@ export default function EducationalGreenhouseScreen() {
   }, []);
 
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   const handleBack = () => {
     hapticLight();
@@ -60,11 +60,11 @@ export default function EducationalGreenhouseScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]}>
       {preview && <PreviewBadge />}
       {/* Header */}
-      <View style={[styles.header, { borderBottomColor: jarsSecondary }]}>
+      <View style={[styles.header, { borderBottomColor: brandSecondary }]}>
         <Pressable onPress={handleBack}>
-          <ChevronLeft color={jarsPrimary} size={24} />
+          <ChevronLeft color={brandPrimary} size={24} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: jarsPrimary }]}>Greenhouse</Text>
+        <Text style={[styles.headerTitle, { color: brandPrimary }]}>Greenhouse</Text>
         <View style={{ width: 24 }} />
       </View>
 

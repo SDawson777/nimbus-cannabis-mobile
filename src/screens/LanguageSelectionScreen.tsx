@@ -10,7 +10,7 @@ import { t } from '../utils/i18n';
 
 export default function LanguageSelectionScreen() {
   const navigation = useNavigation();
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
   const { locale, setLocale } = useSettings();
   const languages = [
     { code: 'en', label: t('english') },
@@ -18,7 +18,7 @@ export default function LanguageSelectionScreen() {
   ];
 
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   const handleSelect = async (code: string) => {
     hapticLight();
@@ -28,22 +28,22 @@ export default function LanguageSelectionScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]}>
-      <View style={[styles.header, { borderBottomColor: jarsSecondary }]}>
+      <View style={[styles.header, { borderBottomColor: brandSecondary }]}>
         <Pressable onPress={() => navigation.goBack()}>
-          <ChevronLeft color={jarsPrimary} size={24} />
+          <ChevronLeft color={brandPrimary} size={24} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: jarsPrimary }]}>{t('selectLanguage')}</Text>
+        <Text style={[styles.headerTitle, { color: brandPrimary }]}>{t('selectLanguage')}</Text>
         <View style={{ width: 24 }} />
       </View>
       <View style={styles.content}>
         {languages.map(lang => (
           <Pressable
             key={lang.code}
-            style={[styles.row, { borderBottomColor: jarsSecondary }]}
+            style={[styles.row, { borderBottomColor: brandSecondary }]}
             onPress={() => handleSelect(lang.code)}
           >
-            <Text style={[styles.label, { color: jarsPrimary }]}>{lang.label}</Text>
-            {locale === lang.code && <Text style={{ color: jarsSecondary }}>✓</Text>}
+            <Text style={[styles.label, { color: brandPrimary }]}>{lang.label}</Text>
+            {locale === lang.code && <Text style={{ color: brandSecondary }}>✓</Text>}
           </Pressable>
         ))}
       </View>

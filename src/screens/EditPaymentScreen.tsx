@@ -57,7 +57,7 @@ const schema = yup.object({
 export default function EditPaymentScreen() {
   const navigation = useNavigation<EditPaymentNavProp>();
   const route = useRoute<EditPaymentRouteProp>();
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
   const queryClient = useQueryClient();
 
   const pm = route.params?.payment || {};
@@ -82,12 +82,12 @@ export default function EditPaymentScreen() {
   }, []);
 
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   const glowStyle =
     colorTemp === 'warm'
       ? {
-          shadowColor: jarsPrimary,
+          shadowColor: brandPrimary,
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.3,
           shadowRadius: 8,
@@ -155,7 +155,7 @@ export default function EditPaymentScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]}>
-      <View style={[styles.header, { borderBottomColor: jarsSecondary }]}>
+      <View style={[styles.header, { borderBottomColor: brandSecondary }]}>
         <Pressable
           onPress={handleBack}
           style={styles.iconBtn}
@@ -163,16 +163,16 @@ export default function EditPaymentScreen() {
           accessibilityLabel="Go back"
           accessibilityHint="Return to previous screen"
         >
-          <ChevronLeft color={jarsPrimary} size={24} />
+          <ChevronLeft color={brandPrimary} size={24} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: jarsPrimary }]}>Edit Payment</Text>
+        <Text style={[styles.headerTitle, { color: brandPrimary }]}>Edit Payment</Text>
         <View style={styles.iconBtn} />
       </View>
 
       <View style={styles.form}>
         {fields.map(f => (
           <View key={f.name} style={styles.field}>
-            <Text style={[styles.label, { color: jarsSecondary }]}>{f.label}</Text>
+            <Text style={[styles.label, { color: brandSecondary }]}>{f.label}</Text>
             {f.name === 'isDefault' ? (
               <Controller
                 control={control}
@@ -187,7 +187,7 @@ export default function EditPaymentScreen() {
                     style={[
                       styles.input,
                       {
-                        borderColor: jarsSecondary,
+                        borderColor: brandSecondary,
                         justifyContent: 'center',
                         flexDirection: 'row',
                       },
@@ -195,7 +195,7 @@ export default function EditPaymentScreen() {
                     accessibilityRole="button"
                     accessibilityLabel={f.label}
                   >
-                    <Text style={{ color: jarsPrimary }}>{value ? 'Yes (Default)' : 'No'}</Text>
+                    <Text style={{ color: brandPrimary }}>{value ? 'Yes (Default)' : 'No'}</Text>
                   </Pressable>
                 )}
               />
@@ -209,9 +209,9 @@ export default function EditPaymentScreen() {
                   field: { onChange: (value: string) => void; onBlur: () => void; value: string };
                 }) => (
                   <TextInput
-                    style={[styles.input, { borderColor: jarsSecondary, color: jarsPrimary }]}
+                    style={[styles.input, { borderColor: brandSecondary, color: brandPrimary }]}
                     placeholder={f.label}
-                    placeholderTextColor={jarsSecondary}
+                    placeholderTextColor={brandSecondary}
                     keyboardType={f.keyboard as any}
                     secureTextEntry={f.secure}
                     onBlur={onBlur}
@@ -236,7 +236,7 @@ export default function EditPaymentScreen() {
         <Pressable
           style={[
             styles.saveBtn,
-            { backgroundColor: jarsPrimary },
+            { backgroundColor: brandPrimary },
             glowStyle,
             (!isValid || isSubmitting) && { opacity: 0.5 },
           ]}

@@ -42,9 +42,9 @@ jest.mock('../../context/ThemeContext', () => {
   return {
     ThemeContext: React.createContext({
       colorTemp: 'neutral',
-      jarsPrimary: '#000',
-      jarsSecondary: '#888',
-      jarsBackground: '#FFF',
+      brandPrimary: '#000',
+      brandSecondary: '#888',
+      brandBackground: '#FFF',
     }),
   };
 });

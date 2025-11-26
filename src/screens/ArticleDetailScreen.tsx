@@ -36,14 +36,14 @@ export default function ArticleDetailScreen() {
   const { slug } = route.params;
   const { data, isLoading, isError } = useArticleBySlug(slug);
 
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
 
   useEffect(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
   }, []);
 
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   const handleBack = () => {
     hapticLight();
@@ -79,11 +79,11 @@ export default function ArticleDetailScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]}>
-      <View style={[styles.header, { borderBottomColor: jarsSecondary }]}>
+      <View style={[styles.header, { borderBottomColor: brandSecondary }]}>
         <Pressable onPress={handleBack} style={styles.iconBtn}>
-          <ChevronLeft color={jarsPrimary} size={24} />
+          <ChevronLeft color={brandPrimary} size={24} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: jarsPrimary }]}>{data.title}</Text>
+        <Text style={[styles.headerTitle, { color: brandPrimary }]}>{data.title}</Text>
         <View style={styles.iconBtn} />
       </View>
 
@@ -92,7 +92,7 @@ export default function ArticleDetailScreen() {
           <CMSImage uri={data.mainImage.url} alt={data.mainImage.alt} style={styles.hero} />
         )}
         <Text style={styles.date}>{new Date(data.publishedAt).toLocaleDateString()}</Text>
-        <Text style={[styles.articleText, { color: jarsSecondary }]}>{String(data.body)}</Text>
+        <Text style={[styles.articleText, { color: brandSecondary }]}>{String(data.body)}</Text>
       </ScrollView>
     </SafeAreaView>
   );

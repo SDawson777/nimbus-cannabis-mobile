@@ -37,7 +37,7 @@ type AddAddressNavProp = NativeStackNavigationProp<RootStackParamList, 'AddAddre
 
 export default function AddAddressScreen() {
   const navigation = useNavigation<AddAddressNavProp>();
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
 
   const { control, handleSubmit } = useForm<AddressFormValues>({
     resolver: yupResolver(addressSchema) as any,
@@ -50,12 +50,12 @@ export default function AddAddressScreen() {
   }, []);
 
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   const glowStyle =
     colorTemp === 'warm'
       ? {
-          shadowColor: jarsPrimary,
+          shadowColor: brandPrimary,
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.3,
           shadowRadius: 8,
@@ -105,11 +105,11 @@ export default function AddAddressScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]}>
-      <View style={[styles.header, { borderBottomColor: jarsSecondary }]}>
+      <View style={[styles.header, { borderBottomColor: brandSecondary }]}>
         <Pressable onPress={handleBack} style={styles.iconBtn}>
-          <ChevronLeft color={jarsPrimary} size={24} />
+          <ChevronLeft color={brandPrimary} size={24} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: jarsPrimary }]}>Add Address</Text>
+        <Text style={[styles.headerTitle, { color: brandPrimary }]}>Add Address</Text>
         <View style={styles.iconBtn} />
       </View>
       <View style={styles.form}>
@@ -123,7 +123,7 @@ export default function AddAddressScreen() {
           { name: 'country', placeholder: 'Country' },
         ].map(({ name, placeholder, keyboard }) => (
           <View key={name}>
-            <Text style={[styles.label, { color: jarsSecondary }]}>{placeholder}</Text>
+            <Text style={[styles.label, { color: brandSecondary }]}>{placeholder}</Text>
             <Controller
               control={control}
               name={name as keyof AddressFormValues}
@@ -142,9 +142,9 @@ export default function AddAddressScreen() {
               }) => (
                 <>
                   <TextInput
-                    style={[styles.input, { borderColor: jarsSecondary, color: jarsPrimary }]}
+                    style={[styles.input, { borderColor: brandSecondary, color: brandPrimary }]}
                     placeholder={placeholder}
-                    placeholderTextColor={jarsSecondary}
+                    placeholderTextColor={brandSecondary}
                     keyboardType={keyboard as any}
                     accessibilityLabel={placeholder}
                     accessibilityHint={`Enter ${placeholder.toLowerCase()}`}
@@ -163,7 +163,7 @@ export default function AddAddressScreen() {
         ))}
 
         <Pressable
-          style={[styles.saveBtn, { backgroundColor: jarsPrimary }, glowStyle]}
+          style={[styles.saveBtn, { backgroundColor: brandPrimary }, glowStyle]}
           onPress={handleSubmit(onSave)}
           accessibilityLabel="Save address"
           accessibilityHint="Saves this address"

@@ -33,14 +33,14 @@ const STORES = [
 
 export default function StoreLocatorScreen() {
   const navigation = useNavigation<LocatorNavProp>();
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
 
   useEffect(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
   }, []);
 
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   const handleBack = () => {
     hapticLight();
@@ -57,11 +57,11 @@ export default function StoreLocatorScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]}>
       {/* Header */}
-      <View style={[styles.header, { borderBottomColor: jarsSecondary }]}>
+      <View style={[styles.header, { borderBottomColor: brandSecondary }]}>
         <Pressable onPress={handleBack}>
-          <ChevronLeft color={jarsPrimary} size={24} />
+          <ChevronLeft color={brandPrimary} size={24} />
         </Pressable>
-        <Text style={[styles.title, { color: jarsPrimary }]}>Store Locator</Text>
+        <Text style={[styles.title, { color: brandPrimary }]}>Store Locator</Text>
         <View style={{ width: 24 }} />
       </View>
 
@@ -73,12 +73,12 @@ export default function StoreLocatorScreen() {
         renderItem={({ item }) => (
           <Pressable
             style={styles.row}
-            android_ripple={{ color: `${jarsSecondary}20` }}
+            android_ripple={{ color: `${brandSecondary}20` }}
             onPress={() => handleSelectStore(item)}
           >
             <View>
-              <Text style={[styles.storeName, { color: jarsPrimary }]}>{item.name}</Text>
-              <Text style={[styles.storeAddress, { color: jarsSecondary }]}>{item.address}</Text>
+              <Text style={[styles.storeName, { color: brandPrimary }]}>{item.name}</Text>
+              <Text style={[styles.storeAddress, { color: brandSecondary }]}>{item.address}</Text>
             </View>
           </Pressable>
         )}

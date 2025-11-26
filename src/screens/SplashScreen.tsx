@@ -25,7 +25,7 @@ type SplashNavProp = NativeStackNavigationProp<RootStackParamList, 'SplashScreen
 
 export default function SplashScreen() {
   const navigation = useNavigation<SplashNavProp>();
-  const { colorTemp, jarsPrimary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandBackground } = useContext(ThemeContext);
   const fade = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -45,12 +45,12 @@ export default function SplashScreen() {
   }, [fade, navigation]);
 
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]}>
-      <Animated.Text style={[styles.logo, { opacity: fade, color: jarsPrimary }]}>
-        JARS
+      <Animated.Text style={[styles.logo, { opacity: fade, color: brandPrimary }]}>
+        Nimbus
       </Animated.Text>
     </SafeAreaView>
   );

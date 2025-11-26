@@ -16,9 +16,9 @@ import { ThemeContext } from '../context/ThemeContext';
 
 export default function AppSettingsScreen() {
   const {
-    jarsPrimary,
-    jarsSecondary,
-    jarsBackground,
+    brandPrimary,
+    brandSecondary,
+    brandBackground,
     debugInfo,
     weatherSimulation,
     setWeatherSimulation,
@@ -150,9 +150,9 @@ npm run seed:demo
     }
   };
 
-  const textColor = highContrast ? '#000000' : jarsPrimary;
-  const backgroundColor = highContrast ? '#FFFFFF' : jarsBackground;
-  const accentColor = highContrast ? '#0000FF' : jarsSecondary;
+  const textColor = highContrast ? '#000000' : brandPrimary;
+  const backgroundColor = highContrast ? '#FFFFFF' : brandBackground;
+  const accentColor = highContrast ? '#0000FF' : brandSecondary;
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor }]}>

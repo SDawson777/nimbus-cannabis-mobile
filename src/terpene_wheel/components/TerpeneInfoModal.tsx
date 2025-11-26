@@ -11,7 +11,7 @@ interface Props {
 }
 
 export const TerpeneInfoModal: React.FC<Props> = ({ terpene, visible, onClose }) => {
-  const { jarsPrimary, jarsBackground } = useContext(ThemeContext);
+  const { brandPrimary, brandBackground } = useContext(ThemeContext);
 
   if (!terpene) return null;
 
@@ -19,13 +19,13 @@ export const TerpeneInfoModal: React.FC<Props> = ({ terpene, visible, onClose })
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <View style={styles.overlay}>
         <View
-          style={[styles.content, { backgroundColor: jarsBackground, borderColor: jarsPrimary }]}
+          style={[styles.content, { backgroundColor: brandBackground, borderColor: brandPrimary }]}
         >
-          <Text style={[styles.title, { color: jarsPrimary }]}>{terpene.name}</Text>
+          <Text style={[styles.title, { color: brandPrimary }]}>{terpene.name}</Text>
           <Text style={styles.section}>Aromas: {terpene.aromas.join(', ')}</Text>
           <Text style={styles.section}>Effects: {terpene.effects.join(', ')}</Text>
           <Text style={styles.sectionSmall}>Strains: {terpene.strains.join(', ')}</Text>
-          <Pressable onPress={onClose} style={[styles.button, { backgroundColor: jarsPrimary }]}>
+          <Pressable onPress={onClose} style={[styles.button, { backgroundColor: brandPrimary }]}>
             <Text style={styles.buttonText}>Close</Text>
           </Pressable>
         </View>

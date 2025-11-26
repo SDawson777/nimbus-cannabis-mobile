@@ -21,8 +21,8 @@ const BrandContext = createContext<BrandContextType | undefined>(undefined);
 // Default fallback brand for when API fails
 const DEFAULT_BRAND: Brand = {
   id: 'default',
-  name: 'JARS Cannabis',
-  slug: 'jars',
+  name: 'Cannabis Platform',
+  slug: 'default',
   primaryColor: '#16A34A',
   secondaryColor: '#15803D',
   logoUrl: undefined,
@@ -50,8 +50,8 @@ export function BrandProvider({ children }: BrandProviderProps) {
       setLoading(true);
       setError(null);
 
-      // Try to fetch the default JARS brand from API
-      const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}/api/brands/jars`);
+      // Try to fetch the default brand from API
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}/api/brands/default`);
 
       if (response.ok) {
         const brandData = await response.json();

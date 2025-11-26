@@ -19,7 +19,7 @@ type NavProp = NativeStackNavigationProp<RootStackParamList, 'JournalEntry'>;
 export default function JournalEntryScreen() {
   const { params } = useRoute<RouteProps>();
   const navigation = useNavigation<NavProp>();
-  const { jarsPrimary } = React.useContext(ThemeContext);
+  const { brandPrimary } = React.useContext(ThemeContext);
   const { queueJournalAction } = useOfflineJournalQueue();
 
   const isEditMode = !!params.journalEntry;
@@ -77,7 +77,7 @@ export default function JournalEntryScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.title, { color: jarsPrimary }]}>
+      <Text style={[styles.title, { color: brandPrimary }]}>
         {isEditMode ? 'Edit Journal Entry' : 'Journal Entry'}
       </Text>
       <Text style={styles.meta}>{params.item.name}</Text>
@@ -90,7 +90,7 @@ export default function JournalEntryScreen() {
             maximumValue={10}
             step={1}
             value={_values[label]}
-            minimumTrackTintColor={jarsPrimary}
+            minimumTrackTintColor={brandPrimary}
             onValueChange={v => handleChange(label, v)}
           />
           <Text style={styles.sliderValue}>{_values[label]}</Text>
@@ -103,7 +103,7 @@ export default function JournalEntryScreen() {
         multiline
         style={styles.notes}
       />
-      <Text onPress={saveEntry} style={[styles.save, { color: jarsPrimary }]}>
+      <Text onPress={saveEntry} style={[styles.save, { color: brandPrimary }]}>
         Save
       </Text>
     </View>

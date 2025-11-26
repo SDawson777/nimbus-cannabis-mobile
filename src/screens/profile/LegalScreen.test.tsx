@@ -39,9 +39,9 @@ import * as legalHook from '../../hooks/useLegal';
 
 const theme = {
   colorTemp: 'neutral' as const,
-  jarsPrimary: '#222',
-  jarsSecondary: '#666',
-  jarsBackground: '#fff',
+  brandPrimary: '#222',
+  brandSecondary: '#666',
+  brandBackground: '#fff',
   loading: false,
   debugInfo: {
     weatherSource: 'time-of-day' as const,

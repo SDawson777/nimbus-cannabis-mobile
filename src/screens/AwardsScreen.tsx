@@ -77,9 +77,9 @@ export default function AwardsScreen() {
   const awards = data?.awards ?? [];
   const rewards = data?.rewards ?? [];
 
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   const [pulse] = useState(new Animated.Value(1));
   const confettiRef = useRef<ConfettiCannon | null>(null);
@@ -151,7 +151,7 @@ export default function AwardsScreen() {
   // Render each award item
   const renderItem = ({ item }: ListRenderItemInfo<Award>) => (
     <View
-      style={[styles.card, { borderColor: jarsPrimary }]}
+      style={[styles.card, { borderColor: brandPrimary }]}
       accessible
       accessibilityRole="text"
       accessibilityLabel={`${item.title}. Earned ${item.earnedDate}`}
@@ -162,7 +162,7 @@ export default function AwardsScreen() {
         accessibilityLabel={`${item.title} icon`}
         accessible
       />
-      <Text style={[styles.title, { color: jarsPrimary }]}>{item.title}</Text>
+      <Text style={[styles.title, { color: brandPrimary }]}>{item.title}</Text>
       <Text style={styles.desc}>{item.description}</Text>
       <Text style={styles.date}>Earned: {item.earnedDate}</Text>
     </View>
@@ -182,14 +182,14 @@ export default function AwardsScreen() {
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]}>
         <View style={styles.errorContainer}>
-          <Text style={[styles.errorText, { color: jarsPrimary }]}>Error: {error.message}</Text>
+          <Text style={[styles.errorText, { color: brandPrimary }]}>Error: {error.message}</Text>
           <Button
             title="Retry"
             onPress={() => {
               hapticMedium();
               refetch();
             }}
-            color={jarsPrimary}
+            color={brandPrimary}
           />
         </View>
       </SafeAreaView>
@@ -200,7 +200,7 @@ export default function AwardsScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]}>
       {/* Header */}
-      <View style={[styles.header, { borderBottomColor: jarsSecondary }]}>
+      <View style={[styles.header, { borderBottomColor: brandSecondary }]}>
         <Pressable
           onPress={handleBack}
           style={styles.iconBtn}
@@ -208,9 +208,9 @@ export default function AwardsScreen() {
           accessibilityLabel="Go back"
           accessible
         >
-          <ChevronLeft color={jarsPrimary} size={24} />
+          <ChevronLeft color={brandPrimary} size={24} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: jarsPrimary }]} accessibilityRole="header">
+        <Text style={[styles.headerTitle, { color: brandPrimary }]} accessibilityRole="header">
           Rewards & Recognition
         </Text>
         <Pressable
@@ -220,7 +220,7 @@ export default function AwardsScreen() {
           accessibilityLabel="Open settings"
           accessible
         >
-          <Settings color={jarsPrimary} size={24} />
+          <Settings color={brandPrimary} size={24} />
         </Pressable>
       </View>
       <ConfettiCannon
@@ -234,18 +234,18 @@ export default function AwardsScreen() {
       <ScrollView>
         {/* Hero */}
         <View style={styles.hero}>
-          <Text style={[styles.name, { color: jarsPrimary }]}>{user.name}</Text>
+          <Text style={[styles.name, { color: brandPrimary }]}>{user.name}</Text>
           <Animated.Text
-            style={[styles.points, { color: jarsPrimary, transform: [{ scale: pulse }] }]}
+            style={[styles.points, { color: brandPrimary, transform: [{ scale: pulse }] }]}
           >
             {user.points} pts
           </Animated.Text>
-          <View style={[styles.progressBar, { borderColor: jarsSecondary }]}>
+          <View style={[styles.progressBar, { borderColor: brandSecondary }]}>
             <Animated.View
               style={[
                 styles.progressFill,
                 {
-                  backgroundColor: jarsPrimary,
+                  backgroundColor: brandPrimary,
                   width: progressAnim.interpolate({
                     inputRange: [0, 1],
                     outputRange: ['0%', '100%'],
@@ -254,11 +254,11 @@ export default function AwardsScreen() {
               ]}
             />
           </View>
-          <Text style={[styles.tier, { color: jarsPrimary }]}>Tier: {user.tier}</Text>
+          <Text style={[styles.tier, { color: brandPrimary }]}>Tier: {user.tier}</Text>
         </View>
 
         {/* Rewards Carousel */}
-        <Text style={[styles.sectionTitle, { color: jarsPrimary }]}>Available Rewards</Text>
+        <Text style={[styles.sectionTitle, { color: brandPrimary }]}>Available Rewards</Text>
         <FlatList
           data={rewards}
           keyExtractor={r => r.id}
@@ -268,8 +268,8 @@ export default function AwardsScreen() {
           renderItem={({ item }) => (
             <Pressable
               onPress={() => redeemReward(item)}
-              style={[styles.rewardCard, { borderColor: jarsPrimary }]}
-              android_ripple={{ color: `${jarsPrimary}20` }}
+              style={[styles.rewardCard, { borderColor: brandPrimary }]}
+              android_ripple={{ color: `${brandPrimary}20` }}
               accessibilityRole="button"
               accessibilityLabel={`Redeem ${item.title}`}
               accessible
@@ -288,20 +288,20 @@ export default function AwardsScreen() {
                   accessible
                 />
               )}
-              <Text style={[styles.rewardTitle, { color: jarsPrimary }]}>{item.title}</Text>
+              <Text style={[styles.rewardTitle, { color: brandPrimary }]}>{item.title}</Text>
               <Text style={styles.rewardPoints}>{item.cost} pts</Text>
             </Pressable>
           )}
         />
 
         {/* Terpene Wheel Placeholder */}
-        <Text style={[styles.sectionTitle, { color: jarsPrimary }]}>Exclusive Insights</Text>
+        <Text style={[styles.sectionTitle, { color: brandPrimary }]}>Exclusive Insights</Text>
         <View style={styles.wheelPlaceholder}>
-          <Text style={{ color: jarsPrimary }}>Terpene Wheel</Text>
+          <Text style={{ color: brandPrimary }}>Terpene Wheel</Text>
         </View>
 
         {/* Reward History */}
-        <Text style={[styles.sectionTitle, { color: jarsPrimary }]}>Reward History</Text>
+        <Text style={[styles.sectionTitle, { color: brandPrimary }]}>Reward History</Text>
         <FlatList
           data={awards ?? []}
           keyExtractor={item => item.id}
@@ -318,7 +318,7 @@ export default function AwardsScreen() {
           accessibilityLabel="Open Loyalty FAQs"
           accessible
         >
-          <Text style={[styles.linkText, { color: jarsPrimary }]}>Loyalty FAQs</Text>
+          <Text style={[styles.linkText, { color: brandPrimary }]}>Loyalty FAQs</Text>
         </Pressable>
       </ScrollView>
     </SafeAreaView>

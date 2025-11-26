@@ -14,19 +14,19 @@ type NavProp = NativeStackNavigationProp<RootStackParamList, 'LoginSignUpDecisio
 
 export default function LoginSignUpDecisionScreen() {
   const navigation = useNavigation<NavProp>();
-  const { jarsPrimary, jarsBackground } = useContext(ThemeContext);
+  const { brandPrimary, brandBackground } = useContext(ThemeContext);
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: jarsBackground }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: brandBackground }]}>
       <Animated.View entering={FadeInUp.duration(400)} style={styles.inner}>
-        <Text style={[styles.title, { color: jarsPrimary }]}>Welcome</Text>
+        <Text style={[styles.title, { color: brandPrimary }]}>Welcome</Text>
         <Button
           title="Login"
           onPress={() => {
             hapticMedium();
             navigation.navigate('Login');
           }}
-          style={[styles.btn, { backgroundColor: jarsPrimary }]}
+          style={[styles.btn, { backgroundColor: brandPrimary }]}
         />
         <Button
           title="Create Account"
@@ -34,7 +34,7 @@ export default function LoginSignUpDecisionScreen() {
             hapticMedium();
             navigation.navigate('SignUp');
           }}
-          style={[styles.btn, { backgroundColor: jarsPrimary }]}
+          style={[styles.btn, { backgroundColor: brandPrimary }]}
         />
         <Button
           title="Browse as Guest"
@@ -42,7 +42,7 @@ export default function LoginSignUpDecisionScreen() {
             hapticMedium();
             navigation.replace('HomeScreen');
           }}
-          style={[styles.btn, { backgroundColor: jarsPrimary }]}
+          style={[styles.btn, { backgroundColor: brandPrimary }]}
         />
         <AnimatedPulseGlow />
       </Animated.View>

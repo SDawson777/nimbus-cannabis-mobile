@@ -34,7 +34,7 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
 export default function EditAddressScreen() {
   const navigation = useNavigation();
   const route = useRoute();
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
 
   // Existing address passed via params
   const addr = (route.params as any)?.address || {};
@@ -61,7 +61,7 @@ export default function EditAddressScreen() {
   }, []);
 
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   const handleBack = () => {
     hapticLight();
@@ -93,11 +93,11 @@ export default function EditAddressScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]}>
       {/* Header */}
-      <View style={[styles.header, { borderBottomColor: jarsSecondary }]}>
+      <View style={[styles.header, { borderBottomColor: brandSecondary }]}>
         <Pressable onPress={handleBack} style={styles.iconBtn}>
-          <ChevronLeft color={jarsPrimary} size={24} />
+          <ChevronLeft color={brandPrimary} size={24} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: jarsPrimary }]}>Edit Address</Text>
+        <Text style={[styles.headerTitle, { color: brandPrimary }]}>Edit Address</Text>
         <View style={styles.iconBtn} />
       </View>
 
@@ -113,7 +113,7 @@ export default function EditAddressScreen() {
           { name: 'country', placeholder: 'Country' },
         ].map(({ name, placeholder, keyboard }) => (
           <View key={name}>
-            <Text style={[styles.label, { color: jarsPrimary }]}>{placeholder}</Text>
+            <Text style={[styles.label, { color: brandPrimary }]}>{placeholder}</Text>
             <Controller
               control={control}
               name={name as keyof AddressFormValues}
@@ -129,7 +129,7 @@ export default function EditAddressScreen() {
                 return (
                   <>
                     <TextInput
-                      style={[styles.input, { borderColor: jarsSecondary }]}
+                      style={[styles.input, { borderColor: brandSecondary }]}
                       value={(value ?? '') as string}
                       onBlur={onBlur}
                       onChangeText={t => {
@@ -137,7 +137,7 @@ export default function EditAddressScreen() {
                         onChange(t);
                       }}
                       placeholder={placeholder}
-                      placeholderTextColor={jarsSecondary}
+                      placeholderTextColor={brandSecondary}
                       keyboardType={keyboard as any}
                       accessibilityLabel={placeholder}
                       accessibilityHint={`Enter ${placeholder.toLowerCase()}`}
@@ -151,7 +151,7 @@ export default function EditAddressScreen() {
         ))}
 
         <Pressable
-          style={[styles.saveBtn, { backgroundColor: jarsPrimary }]}
+          style={[styles.saveBtn, { backgroundColor: brandPrimary }]}
           onPress={handleSubmit(onSave)}
           accessibilityLabel="Save address"
           accessibilityHint="Saves this address"

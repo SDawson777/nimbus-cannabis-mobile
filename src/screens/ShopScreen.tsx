@@ -45,7 +45,7 @@ const CARD_WIDTH = (width - 48) / 2;
 export default function ShopScreen() {
   const navigation = useNavigation<ShopNavProp>();
   const weatherFilter = useWeatherFilterParam(navigation);
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
   const { preferredStore } = useStore();
   const [weatherPrefEnabled, _setWeatherPrefEnabled, weatherPrefHydrated] =
     useWeatherRecommendationsPreference();
@@ -145,13 +145,13 @@ export default function ShopScreen() {
 
   // dynamic background
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   // glow for product cards
   const glowStyle =
     colorTemp === 'warm'
       ? {
-          shadowColor: jarsPrimary,
+          shadowColor: brandPrimary,
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.3,
           shadowRadius: 8,
@@ -218,8 +218,8 @@ export default function ShopScreen() {
             accessibilityLabel={`Filter by category`}
             onPress={() => setSelectedCategory(prev => (prev === f.id ? null : f.id))}
           >
-            <View style={[styles.filterChip, { borderColor: jarsPrimary }]}>
-              <Text style={{ color: jarsPrimary }}>{f.label}</Text>
+            <View style={[styles.filterChip, { borderColor: brandPrimary }]}>
+              <Text style={{ color: brandPrimary }}>{f.label}</Text>
             </View>
           </Pressable>
         ))}
@@ -293,7 +293,7 @@ export default function ShopScreen() {
               }`}
               style={[
                 styles.card,
-                { borderColor: jarsPrimary, backgroundColor: '#FFF' },
+                { borderColor: brandPrimary, backgroundColor: '#FFF' },
                 glowStyle,
               ]}
               onPress={() => handleProduct(item)}
@@ -306,8 +306,10 @@ export default function ShopScreen() {
                   style={styles.image}
                 />
               )}
-              <Text style={[styles.name, { color: jarsPrimary }]}>{item.name}</Text>
-              <Text style={[styles.price, { color: jarsSecondary }]}>${item.price.toFixed(2)}</Text>
+              <Text style={[styles.name, { color: brandPrimary }]}>{item.name}</Text>
+              <Text style={[styles.price, { color: brandSecondary }]}>
+                ${item.price.toFixed(2)}
+              </Text>
               <Pressable
                 testID={`add-to-cart-${
                   (item as any).id ?? (item as any).__id ?? (item as any).slug

@@ -10,21 +10,21 @@ interface Props {
 }
 
 export default function LegalDisclaimerModal({ visible, onClose }: Props) {
-  const { jarsBackground, jarsPrimary, jarsSecondary } = useContext(ThemeContext);
+  const { brandBackground, brandPrimary, brandSecondary } = useContext(ThemeContext);
 
   return (
     <Modal animationType="slide" transparent visible={visible} onRequestClose={onClose}>
-      <View style={[styles.overlay, { backgroundColor: `${jarsBackground}CC` }]}>
-        <View style={[styles.container, { backgroundColor: jarsBackground }]}>
+      <View style={[styles.overlay, { backgroundColor: `${brandBackground}CC` }]}>
+        <View style={[styles.container, { backgroundColor: brandBackground }]}>
           <ScrollView contentContainerStyle={styles.scroll}>
-            <Text style={[styles.title, { color: jarsPrimary }]}>Legal Disclaimer</Text>
-            <Text style={[styles.body, { color: jarsSecondary }]}>
+            <Text style={[styles.title, { color: brandPrimary }]}>Legal Disclaimer</Text>
+            <Text style={[styles.body, { color: brandSecondary }]}>
               This app is intended for use only by adults 21 years of age or older. All purchases
               must comply with applicable _state and local laws. Please consume responsibly.
             </Text>
           </ScrollView>
           <Pressable
-            style={[styles.close, { backgroundColor: jarsPrimary }]}
+            style={[styles.close, { backgroundColor: brandPrimary }]}
             accessibilityRole="button"
             onPress={() => {
               hapticLight();

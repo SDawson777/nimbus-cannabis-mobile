@@ -39,7 +39,7 @@ export default function OnboardingPager() {
 
   React.useEffect(() => {
     AccessibilityInfo.isScreenReaderEnabled().then(enabled => {
-      if (enabled) Speech.speak('Welcome to Jars');
+      if (enabled) Speech.speak('Welcome to Nimbus');
     });
   }, []);
 

@@ -27,20 +27,20 @@ type OrderConfirmationNavProp = NativeStackNavigationProp<RootStackParamList, 'O
 
 export default function OrderConfirmationScreen() {
   const navigation = useNavigation<OrderConfirmationNavProp>();
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
 
   useEffect(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
   }, []);
 
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   // glow for button
   const glowStyle =
     colorTemp === 'warm'
       ? {
-          shadowColor: jarsPrimary,
+          shadowColor: brandPrimary,
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.3,
           shadowRadius: 8,
@@ -65,15 +65,15 @@ export default function OrderConfirmationScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]}>
       <View style={styles.content}>
-        <HomeIcon color={jarsPrimary} size={48} />
-        <Text style={[styles.title, { color: jarsPrimary }]}>Thank you for your order!</Text>
-        <Text style={[styles.subtitle, { color: jarsSecondary }]}>
+        <HomeIcon color={brandPrimary} size={48} />
+        <Text style={[styles.title, { color: brandPrimary }]}>Thank you for your order!</Text>
+        <Text style={[styles.subtitle, { color: brandSecondary }]}>
           Your order is being processed and will be ready soon.
         </Text>
-        <Text style={[styles.subtitle, { color: jarsPrimary }]}>You earned 120 pts!</Text>
+        <Text style={[styles.subtitle, { color: brandPrimary }]}>You earned 120 pts!</Text>
       </View>
       <Pressable
-        style={[styles.button, { backgroundColor: jarsPrimary }, glowStyle]}
+        style={[styles.button, { backgroundColor: brandPrimary }, glowStyle]}
         onPress={handleHome}
       >
         <Text style={styles.buttonText}>Back to Home</Text>

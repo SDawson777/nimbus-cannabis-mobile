@@ -28,7 +28,7 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
 
 export default function HelpFAQScreen() {
   const navigation = useNavigation();
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
   const [openIds, setOpenIds] = useState<string[]>([]);
   const { data, isLoading, isError } = useFAQQuery();
   const { preview } = useCMSPreview();
@@ -38,7 +38,7 @@ export default function HelpFAQScreen() {
   }, []);
 
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   const handleBack = () => {
     hapticLight();
@@ -83,21 +83,21 @@ export default function HelpFAQScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]}>
       {preview && <PreviewBadge />}
-      <View style={[styles.header, { borderBottomColor: jarsSecondary }]}>
+      <View style={[styles.header, { borderBottomColor: brandSecondary }]}>
         <Pressable onPress={handleBack}>
-          <ChevronLeft color={jarsPrimary} size={24} />
+          <ChevronLeft color={brandPrimary} size={24} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: jarsPrimary }]}>Help & FAQ</Text>
+        <Text style={[styles.headerTitle, { color: brandPrimary }]}>Help & FAQ</Text>
         <View style={{ width: 24 }} />
       </View>
       <ScrollView contentContainerStyle={styles.content}>
         {data.map((item: { id: string; question: string; answer: string }) => (
           <View key={item.id} style={styles.faqItem}>
             <Pressable onPress={() => toggleFAQ(item.id)}>
-              <Text style={[styles.question, { color: jarsPrimary }]}>{item.question}</Text>
+              <Text style={[styles.question, { color: brandPrimary }]}>{item.question}</Text>
             </Pressable>
             {openIds.includes(item.id) && (
-              <Text style={[styles.answer, { color: jarsSecondary }]}>{item.answer}</Text>
+              <Text style={[styles.answer, { color: brandSecondary }]}>{item.answer}</Text>
             )}
           </View>
         ))}

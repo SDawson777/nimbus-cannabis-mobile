@@ -43,12 +43,12 @@ type ChatNavProp = NativeStackNavigationProp<RootStackParamList, 'ConciergeChat'
 
 export default function ConciergeChatScreen() {
   const navigation = useNavigation<ChatNavProp>();
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
   const { messages, loading, sendMessage, retryMessage } = useConcierge();
   const aiBudtenderMutation = useAiBudtender();
 
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   const [input, setInput] = useState('');
   const [lastUserMessage, setLastUserMessage] = useState('');
@@ -147,12 +147,12 @@ export default function ConciergeChatScreen() {
         behavior={Platform.select({ ios: 'padding', android: undefined })}
       >
         {/* Header */}
-        <View style={[styles.header, { borderBottomColor: jarsSecondary }]}>
+        <View style={[styles.header, { borderBottomColor: brandSecondary }]}>
           <Pressable onPress={handleBack}>
-            <Send color={jarsPrimary} size={24} />
+            <Send color={brandPrimary} size={24} />
           </Pressable>
           <View style={{ flex: 1, alignItems: 'center' }}>
-            <Text style={[styles.headerTitle, { color: jarsPrimary }]}>Concierge Chat</Text>
+            <Text style={[styles.headerTitle, { color: brandPrimary }]}>Concierge Chat</Text>
           </View>
           <View style={{ width: 24 }} />
         </View>
@@ -170,11 +170,11 @@ export default function ConciergeChatScreen() {
               style={[
                 styles.messageBubble,
                 item.sender === 'user'
-                  ? [styles.userBubble, { backgroundColor: jarsPrimary }]
+                  ? [styles.userBubble, { backgroundColor: brandPrimary }]
                   : [
                       styles.botBubble,
                       {
-                        backgroundColor: item.error ? '#ffebee' : jarsBackground,
+                        backgroundColor: item.error ? '#ffebee' : brandBackground,
                         borderColor: item.error ? '#f44336' : 'transparent',
                         borderWidth: item.error ? 1 : 0,
                       },
@@ -187,7 +187,7 @@ export default function ConciergeChatScreen() {
                   item.sender === 'user'
                     ? { color: '#FFFFFF' }
                     : {
-                        color: item.error ? '#f44336' : jarsPrimary,
+                        color: item.error ? '#f44336' : brandPrimary,
                         fontStyle: item.isOptimistic ? 'italic' : 'normal',
                       },
                 ]}
@@ -205,38 +205,40 @@ export default function ConciergeChatScreen() {
         />
 
         {loading && (
-          <Text style={[styles.statusText, { color: jarsSecondary }]}>Bot is typing...</Text>
+          <Text style={[styles.statusText, { color: brandSecondary }]}>Bot is typing...</Text>
         )}
 
         {/* AI Budtender Quick Prompts */}
         <View style={styles.quickPromptsContainer}>
-          <Text style={[styles.quickPromptsTitle, { color: jarsPrimary }]}>
+          <Text style={[styles.quickPromptsTitle, { color: brandPrimary }]}>
             Quick AI Budtender Questions
           </Text>
           <View style={styles.quickPromptsGrid}>
             <Pressable
-              style={[styles.quickPromptButton, { backgroundColor: jarsSecondary }]}
+              style={[styles.quickPromptButton, { backgroundColor: brandSecondary }]}
               onPress={() => handleQuickPrompt('Recommend something for sleep')}
             >
-              <Text style={[styles.quickPromptText, { color: jarsPrimary }]}>💤 Sleep Help</Text>
+              <Text style={[styles.quickPromptText, { color: brandPrimary }]}>💤 Sleep Help</Text>
             </Pressable>
             <Pressable
-              style={[styles.quickPromptButton, { backgroundColor: jarsSecondary }]}
+              style={[styles.quickPromptButton, { backgroundColor: brandSecondary }]}
               onPress={() => handleQuickPrompt("I'm new to cannabis, where do I start?")}
             >
-              <Text style={[styles.quickPromptText, { color: jarsPrimary }]}>🌱 Beginner</Text>
+              <Text style={[styles.quickPromptText, { color: brandPrimary }]}>🌱 Beginner</Text>
             </Pressable>
             <Pressable
-              style={[styles.quickPromptButton, { backgroundColor: jarsSecondary }]}
+              style={[styles.quickPromptButton, { backgroundColor: brandSecondary }]}
               onPress={() => handleQuickPrompt('What helps with stress and anxiety?')}
             >
-              <Text style={[styles.quickPromptText, { color: jarsPrimary }]}>😌 Stress Relief</Text>
+              <Text style={[styles.quickPromptText, { color: brandPrimary }]}>
+                😌 Stress Relief
+              </Text>
             </Pressable>
             <Pressable
-              style={[styles.quickPromptButton, { backgroundColor: jarsSecondary }]}
+              style={[styles.quickPromptButton, { backgroundColor: brandSecondary }]}
               onPress={() => handleQuickPrompt('Something for energy and focus?')}
             >
-              <Text style={[styles.quickPromptText, { color: jarsPrimary }]}>⚡ Energy</Text>
+              <Text style={[styles.quickPromptText, { color: brandPrimary }]}>⚡ Energy</Text>
             </Pressable>
           </View>
         </View>
@@ -245,14 +247,14 @@ export default function ConciergeChatScreen() {
         <View
           style={[
             styles.inputRow,
-            { borderTopColor: jarsSecondary, backgroundColor: jarsBackground },
+            { borderTopColor: brandSecondary, backgroundColor: brandBackground },
           ]}
         >
           <TextInput
             testID="message-input"
-            style={[styles.input, { backgroundColor: jarsBackground, color: jarsPrimary }]}
+            style={[styles.input, { backgroundColor: brandBackground, color: brandPrimary }]}
             placeholder="Type your message..."
-            placeholderTextColor={jarsSecondary}
+            placeholderTextColor={brandSecondary}
             value={input}
             onChangeText={text => {
               hapticLight();
@@ -263,7 +265,7 @@ export default function ConciergeChatScreen() {
             testID="send-button"
             style={[
               styles.sendButton,
-              { backgroundColor: jarsPrimary, opacity: loading ? 0.5 : 1 },
+              { backgroundColor: brandPrimary, opacity: loading ? 0.5 : 1 },
             ]}
             onPress={handleSendMessage}
             disabled={loading}

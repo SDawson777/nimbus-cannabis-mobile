@@ -43,9 +43,9 @@ interface DebugInfo {
 
 interface ThemeContextValue {
   colorTemp: ColorTemp;
-  jarsPrimary: string;
-  jarsSecondary: string;
-  jarsBackground: string;
+  brandPrimary: string;
+  brandSecondary: string;
+  brandBackground: string;
   loading: boolean;
   debugInfo: DebugInfo;
   // Dev simulation controls
@@ -55,9 +55,9 @@ interface ThemeContextValue {
 
 export const ThemeContext = createContext<ThemeContextValue>({
   colorTemp: 'neutral',
-  jarsPrimary: '#2E5D46',
-  jarsSecondary: '#8CD24C',
-  jarsBackground: '#F9F9F9',
+  brandPrimary: '#2E5D46',
+  brandSecondary: '#8CD24C',
+  brandBackground: '#F9F9F9',
   loading: false,
   debugInfo: {
     weatherSource: 'time-of-day',
@@ -376,9 +376,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
   const value: ThemeContextValue = {
     colorTemp,
-    jarsPrimary: adjustColorForDarkMode(brand.primaryColor),
-    jarsSecondary: adjustColorForDarkMode(brand.secondaryColor),
-    jarsBackground: isDark ? '#121212' : '#F9F9F9',
+    brandPrimary: adjustColorForDarkMode(brand.primaryColor),
+    brandSecondary: adjustColorForDarkMode(brand.secondaryColor),
+    brandBackground: isDark ? '#121212' : '#F9F9F9',
     loading,
     debugInfo,
     weatherSimulation,

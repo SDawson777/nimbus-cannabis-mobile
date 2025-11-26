@@ -27,7 +27,7 @@ type OnboardingNavProp = NativeStackNavigationProp<RootStackParamList, 'Onboardi
 
 export default function OnboardingScreen() {
   const navigation = useNavigation<OnboardingNavProp>();
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
 
   // Animate on mount
   useEffect(() => {
@@ -36,13 +36,13 @@ export default function OnboardingScreen() {
 
   // Background based on time/weather
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   // “Glow” effect for the button
   const glowStyle =
     colorTemp === 'warm'
       ? {
-          shadowColor: jarsPrimary,
+          shadowColor: brandPrimary,
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.3,
           shadowRadius: 8,
@@ -67,14 +67,14 @@ export default function OnboardingScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]}>
       <View style={styles.content}>
-        <Text style={[styles.title, { color: jarsPrimary }]}>Welcome to JARS</Text>
-        <Text style={[styles.subtitle, { color: jarsSecondary }]}>
-          Discover the best cannabis products curated just for you.
+        <Text style={[styles.title, { color: brandPrimary }]}>Welcome to Nimbus</Text>
+        <Text style={[styles.subtitle, { color: brandSecondary }]}>
+          Premium Cannabis Retail Platform.
         </Text>
       </View>
 
       <Pressable
-        style={[styles.nextBtn, { backgroundColor: jarsPrimary }, glowStyle]}
+        style={[styles.nextBtn, { backgroundColor: brandPrimary }, glowStyle]}
         onPress={handleNext}
       >
         <Text style={styles.nextText}>Get Started</Text>
@@ -82,7 +82,7 @@ export default function OnboardingScreen() {
       </Pressable>
 
       <View style={styles.footer}>
-        <Text style={[styles.disclaimer, { color: jarsSecondary }]}>
+        <Text style={[styles.disclaimer, { color: brandSecondary }]}>
           By continuing you agree to our
         </Text>
         <Pressable
@@ -91,7 +91,7 @@ export default function OnboardingScreen() {
             navigation.navigate('Legal');
           }}
         >
-          <Text style={[styles.link, { color: jarsPrimary }]}>Terms & Privacy</Text>
+          <Text style={[styles.link, { color: brandPrimary }]}>Terms & Privacy</Text>
         </Pressable>
       </View>
     </SafeAreaView>

@@ -27,7 +27,7 @@ type NavProp = NativeStackNavigationProp<RootStackParamList, 'ArticleList'>;
 
 export default function ArticleListScreen() {
   const navigation = useNavigation<NavProp>();
-  const { colorTemp, jarsPrimary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandBackground } = useContext(ThemeContext);
   const { data, isLoading } = useEducationalArticles();
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export default function ArticleListScreen() {
   }, []);
 
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   if (isLoading) {
     return (
@@ -65,7 +65,7 @@ export default function ArticleListScreen() {
         keyExtractor={item => item.__id}
         renderItem={({ item }) => (
           <Pressable style={styles.row} onPress={() => openArticle(item.slug)}>
-            <Text style={[styles.title, { color: jarsPrimary }]}>{item.title}</Text>
+            <Text style={[styles.title, { color: brandPrimary }]}>{item.title}</Text>
           </Pressable>
         )}
       />

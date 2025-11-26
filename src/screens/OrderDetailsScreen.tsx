@@ -44,7 +44,7 @@ interface Order {
 export default function OrderDetailsScreen() {
   const navigation = useNavigation<OrderDetailsNavProp>();
   const route = useRoute<OrderDetailsRouteProp>();
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
 
   // fallback order if none provided
   const order: Order = route.params?.order || {
@@ -63,13 +63,13 @@ export default function OrderDetailsScreen() {
 
   // dynamic background
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   // glow for reorder button
   const glowStyle =
     colorTemp === 'warm'
       ? {
-          shadowColor: jarsPrimary,
+          shadowColor: brandPrimary,
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.3,
           shadowRadius: 8,
@@ -106,22 +106,22 @@ export default function OrderDetailsScreen() {
       {/* Header */}
       <View style={[styles.header, { borderBottomColor: '#EEEEEE' }]}>
         <Pressable onPress={handleBack}>
-          <ChevronLeft color={jarsPrimary} size={24} />
+          <ChevronLeft color={brandPrimary} size={24} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: jarsPrimary }]}>Order #{order.id}</Text>
+        <Text style={[styles.headerTitle, { color: brandPrimary }]}>Order #{order.id}</Text>
         <View style={{ width: 24 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={[styles.meta, { color: jarsSecondary }]}>Date: {order.date}</Text>
-        <Text style={[styles.meta, { color: jarsSecondary }]}>Status: {order.status}</Text>
+        <Text style={[styles.meta, { color: brandSecondary }]}>Date: {order.date}</Text>
+        <Text style={[styles.meta, { color: brandSecondary }]}>Status: {order.status}</Text>
 
         {order.items.map(item => (
           <View key={item.id} style={styles.itemRow}>
-            <Text style={[styles.itemName, { color: jarsPrimary }]}>
+            <Text style={[styles.itemName, { color: brandPrimary }]}>
               {item.qty}× {item.name}
             </Text>
-            <Text style={[styles.itemPrice, { color: jarsPrimary }]}>
+            <Text style={[styles.itemPrice, { color: brandPrimary }]}>
               ${(item.price * item.qty).toFixed(2)}
             </Text>
           </View>
@@ -137,13 +137,13 @@ export default function OrderDetailsScreen() {
             <Text style={styles.summaryValue}>${taxes.toFixed(2)}</Text>
           </View>
           <View style={styles.summaryTotal}>
-            <Text style={[styles.totalLabel, { color: jarsPrimary }]}>Total</Text>
-            <Text style={[styles.totalValue, { color: jarsPrimary }]}>${total.toFixed(2)}</Text>
+            <Text style={[styles.totalLabel, { color: brandPrimary }]}>Total</Text>
+            <Text style={[styles.totalValue, { color: brandPrimary }]}>${total.toFixed(2)}</Text>
           </View>
         </View>
 
         <Pressable
-          style={[styles.reorderBtn, { backgroundColor: jarsPrimary }, glowStyle]}
+          style={[styles.reorderBtn, { backgroundColor: brandPrimary }, glowStyle]}
           onPress={handleReorder}
         >
           <Text style={styles.reorderText}>Reorder</Text>

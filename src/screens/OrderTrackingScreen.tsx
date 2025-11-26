@@ -33,14 +33,14 @@ export default function OrderTrackingScreen() {
   const navigation = useNavigation<OrderTrackingNavProp>();
   const route = useRoute<OrderTrackingRouteProp>();
   const status = route.params?.status ?? 'Shipped';
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
 
   useEffect(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
   }, []);
 
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   const handleBack = () => {
     hapticLight();
@@ -50,11 +50,11 @@ export default function OrderTrackingScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]}>
-      <View style={[styles.header, { borderBottomColor: jarsSecondary }]}>
+      <View style={[styles.header, { borderBottomColor: brandSecondary }]}>
         <Pressable onPress={handleBack}>
-          <ChevronLeft color={jarsPrimary} size={24} />
+          <ChevronLeft color={brandPrimary} size={24} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: jarsPrimary }]}>Track Order</Text>
+        <Text style={[styles.headerTitle, { color: brandPrimary }]}>Track Order</Text>
         <View style={{ width: 24 }} />
       </View>
 
@@ -63,9 +63,12 @@ export default function OrderTrackingScreen() {
           const done = steps.indexOf(status) >= idx;
           return (
             <View key={label} style={styles.stepRow}>
-              <View style={[styles.dot, done && { backgroundColor: jarsPrimary }]} />
+              <View style={[styles.dot, done && { backgroundColor: brandPrimary }]} />
               <Text
-                style={[styles.stepLabel, done ? { color: jarsPrimary } : { color: jarsSecondary }]}
+                style={[
+                  styles.stepLabel,
+                  done ? { color: brandPrimary } : { color: brandSecondary },
+                ]}
               >
                 {label}
               </Text>

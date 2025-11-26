@@ -28,14 +28,14 @@ type ContactNavProp = NativeStackNavigationProp<RootStackParamList, 'ContactUs'>
 
 export default function ContactUsScreen() {
   const navigation = useNavigation<ContactNavProp>();
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
 
   useEffect(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
   }, []);
 
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   const handleBack = () => {
     hapticLight();
@@ -45,7 +45,7 @@ export default function ContactUsScreen() {
 
   const contacts = [
     {
-      icon: <Phone size={20} color={jarsPrimary} />,
+      icon: <Phone size={20} color={brandPrimary} />,
       label: 'Call Us',
       action: () => {
         hapticLight();
@@ -53,15 +53,15 @@ export default function ContactUsScreen() {
       },
     },
     {
-      icon: <Mail size={20} color={jarsPrimary} />,
+      icon: <Mail size={20} color={brandPrimary} />,
       label: 'Email Us',
       action: () => {
         hapticLight();
-        Linking.openURL('mailto:help@jarsapp.com');
+        Linking.openURL('mailto:help@nimbus.app');
       },
     },
     {
-      icon: <MessageCircle size={20} color={jarsPrimary} />,
+      icon: <MessageCircle size={20} color={brandPrimary} />,
       label: 'In-App Chat',
       action: () => {
         hapticLight();
@@ -73,11 +73,11 @@ export default function ContactUsScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]}>
-      <View style={[styles.header, { borderBottomColor: jarsSecondary }]}>
+      <View style={[styles.header, { borderBottomColor: brandSecondary }]}>
         <Pressable onPress={handleBack}>
-          <ChevronLeft color={jarsPrimary} size={24} />
+          <ChevronLeft color={brandPrimary} size={24} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: jarsPrimary }]}>Contact Us</Text>
+        <Text style={[styles.headerTitle, { color: brandPrimary }]}>Contact Us</Text>
         <View style={{ width: 24 }} />
       </View>
       <View style={styles.content}>
@@ -89,7 +89,7 @@ export default function ContactUsScreen() {
             android_ripple={{ color: '#EEE' }}
           >
             <View style={styles.iconWrapper}>{c.icon}</View>
-            <Text style={[styles.label, { color: jarsPrimary }]}>{c.label}</Text>
+            <Text style={[styles.label, { color: brandPrimary }]}>{c.label}</Text>
           </Pressable>
         ))}
       </View>

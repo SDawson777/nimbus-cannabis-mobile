@@ -36,7 +36,7 @@ type EditProfileRouteProp = RouteProp<RootStackParamList, 'EditProfile'>;
 export default function EditProfileScreen() {
   const navigation = useNavigation<EditProfileNavProp>();
   const route = useRoute<EditProfileRouteProp>();
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
 
   const profile = route.params?.profile ?? {};
   const { control, handleSubmit } = useForm<ProfileFormValues>({
@@ -55,12 +55,12 @@ export default function EditProfileScreen() {
   }, []);
 
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   const glowStyle =
     colorTemp === 'warm'
       ? {
-          shadowColor: jarsPrimary,
+          shadowColor: brandPrimary,
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.3,
           shadowRadius: 8,
@@ -99,11 +99,11 @@ export default function EditProfileScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]}>
-      <View style={[styles.header, { borderBottomColor: jarsSecondary }]}>
+      <View style={[styles.header, { borderBottomColor: brandSecondary }]}>
         <Pressable onPress={handleBack} style={styles.iconBtn}>
-          <ChevronLeft color={jarsPrimary} size={24} />
+          <ChevronLeft color={brandPrimary} size={24} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: jarsPrimary }]}>Edit Profile</Text>
+        <Text style={[styles.headerTitle, { color: brandPrimary }]}>Edit Profile</Text>
         <View style={styles.iconBtn} />
       </View>
 
@@ -114,7 +114,7 @@ export default function EditProfileScreen() {
           { name: 'phone', placeholder: 'Phone Number', keyboard: 'phone-pad' },
         ].map(({ name, placeholder, keyboard }) => (
           <View key={name}>
-            <Text style={[styles.label, { color: jarsSecondary }]}>{placeholder}</Text>
+            <Text style={[styles.label, { color: brandSecondary }]}>{placeholder}</Text>
             <Controller
               control={control}
               name={name as keyof ProfileFormValues}
@@ -127,9 +127,9 @@ export default function EditProfileScreen() {
               }) => (
                 <>
                   <TextInput
-                    style={[styles.input, { borderColor: jarsSecondary, color: jarsPrimary }]}
+                    style={[styles.input, { borderColor: brandSecondary, color: brandPrimary }]}
                     placeholder={placeholder}
-                    placeholderTextColor={jarsSecondary}
+                    placeholderTextColor={brandSecondary}
                     keyboardType={keyboard as any}
                     value={value}
                     onBlur={onBlur}
@@ -148,7 +148,7 @@ export default function EditProfileScreen() {
         ))}
 
         <Pressable
-          style={[styles.saveBtn, { backgroundColor: jarsPrimary }, glowStyle]}
+          style={[styles.saveBtn, { backgroundColor: brandPrimary }, glowStyle]}
           onPress={handleSubmit(onSave as any)}
           accessibilityLabel="Save profile"
           accessibilityHint="Saves profile information"

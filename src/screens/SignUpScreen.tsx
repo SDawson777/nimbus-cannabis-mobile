@@ -32,7 +32,7 @@ type SignUpNavProp = NativeStackNavigationProp<RootStackParamList, 'SignUp'>;
 
 export default function SignUpScreen() {
   const navigation = useNavigation<SignUpNavProp>();
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
   const { signUp } = useAuth();
 
   const [name, setName] = useState('');
@@ -50,13 +50,13 @@ export default function SignUpScreen() {
 
   // Background based on time/weather
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   // Glow effect for the sign-up button
   const glowStyle =
     colorTemp === 'warm'
       ? {
-          shadowColor: jarsPrimary,
+          shadowColor: brandPrimary,
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.3,
           shadowRadius: 8,
@@ -90,14 +90,14 @@ export default function SignUpScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]}>
-      <Text style={[styles.title, { color: jarsPrimary }]}>Create Account</Text>
+      <Text style={[styles.title, { color: brandPrimary }]}>Create Account</Text>
 
       <TextInput
         style={[
           styles.input,
           {
-            borderColor: focused === 'name' ? jarsPrimary : jarsSecondary,
-            color: jarsPrimary,
+            borderColor: focused === 'name' ? brandPrimary : brandSecondary,
+            color: brandPrimary,
           },
         ]}
         placeholder="Full Name"
@@ -114,8 +114,8 @@ export default function SignUpScreen() {
         style={[
           styles.input,
           {
-            borderColor: focused === 'email' ? jarsPrimary : jarsSecondary,
-            color: jarsPrimary,
+            borderColor: focused === 'email' ? brandPrimary : brandSecondary,
+            color: brandPrimary,
           },
         ]}
         placeholder="Email"
@@ -133,8 +133,8 @@ export default function SignUpScreen() {
         style={[
           styles.input,
           {
-            borderColor: focused === 'phone' ? jarsPrimary : jarsSecondary,
-            color: jarsPrimary,
+            borderColor: focused === 'phone' ? brandPrimary : brandSecondary,
+            color: brandPrimary,
           },
         ]}
         placeholder="Phone"
@@ -153,8 +153,8 @@ export default function SignUpScreen() {
             styles.input,
             {
               flex: 1,
-              borderColor: focused === 'password' ? jarsPrimary : jarsSecondary,
-              color: jarsPrimary,
+              borderColor: focused === 'password' ? brandPrimary : brandSecondary,
+              color: brandPrimary,
             },
           ]}
           placeholder="Password"
@@ -169,9 +169,9 @@ export default function SignUpScreen() {
         />
         <Pressable onPress={() => setShowPassword(!showPassword)} style={styles.eyeBtn}>
           {showPassword ? (
-            <EyeOff color={jarsSecondary} size={20} />
+            <EyeOff color={brandSecondary} size={20} />
           ) : (
-            <Eye color={jarsSecondary} size={20} />
+            <Eye color={brandSecondary} size={20} />
           )}
         </Pressable>
       </View>
@@ -183,8 +183,8 @@ export default function SignUpScreen() {
             styles.input,
             {
               flex: 1,
-              borderColor: focused === 'confirm' ? jarsPrimary : jarsSecondary,
-              color: jarsPrimary,
+              borderColor: focused === 'confirm' ? brandPrimary : brandSecondary,
+              color: brandPrimary,
             },
           ]}
           placeholder="Confirm Password"
@@ -199,16 +199,16 @@ export default function SignUpScreen() {
         />
         <Pressable onPress={() => setShowPassword(!showPassword)} style={styles.eyeBtn}>
           {showPassword ? (
-            <EyeOff color={jarsSecondary} size={20} />
+            <EyeOff color={brandSecondary} size={20} />
           ) : (
-            <Eye color={jarsSecondary} size={20} />
+            <Eye color={brandSecondary} size={20} />
           )}
         </Pressable>
       </View>
 
       <Pressable style={styles.checkboxRow} onPress={() => setOptIn(!optIn)}>
-        <View style={[styles.checkbox, optIn && { backgroundColor: jarsPrimary }]} />
-        <Text style={[styles.optText, { color: jarsPrimary }]}>Email me about deals</Text>
+        <View style={[styles.checkbox, optIn && { backgroundColor: brandPrimary }]} />
+        <Text style={[styles.optText, { color: brandPrimary }]}>Email me about deals</Text>
       </Pressable>
 
       <Pressable
@@ -216,7 +216,7 @@ export default function SignUpScreen() {
         accessibilityLabel="Sign Up"
         style={({ pressed }) => [
           styles.button,
-          { backgroundColor: jarsPrimary },
+          { backgroundColor: brandPrimary },
           glowStyle,
           pressed && { transform: [{ scale: 0.95 }] },
         ]}
@@ -226,7 +226,7 @@ export default function SignUpScreen() {
       </Pressable>
 
       <View style={styles.policy}>
-        <Text style={[styles.disclaimer, { color: jarsSecondary }]}>
+        <Text style={[styles.disclaimer, { color: brandSecondary }]}>
           By creating an account you agree to our
         </Text>
         <View style={styles.legalRow}>
@@ -238,9 +238,9 @@ export default function SignUpScreen() {
               navigation.navigate('Legal');
             }}
           >
-            <Text style={[styles.linkText, { color: jarsPrimary }]}>Terms &amp; Conditions</Text>
+            <Text style={[styles.linkText, { color: brandPrimary }]}>Terms &amp; Conditions</Text>
           </Pressable>
-          <Text style={[styles.disclaimer, { color: jarsSecondary }]}> and </Text>
+          <Text style={[styles.disclaimer, { color: brandSecondary }]}> and </Text>
           <Pressable
             accessibilityRole="link"
             accessibilityLabel="Privacy Policy"
@@ -249,13 +249,13 @@ export default function SignUpScreen() {
               navigation.navigate('Legal');
             }}
           >
-            <Text style={[styles.linkText, { color: jarsPrimary }]}>Privacy Policy</Text>
+            <Text style={[styles.linkText, { color: brandPrimary }]}>Privacy Policy</Text>
           </Pressable>
         </View>
       </View>
 
       <View style={styles.footer}>
-        <Text style={[styles.footerText, { color: jarsSecondary }]}>Already have an account?</Text>
+        <Text style={[styles.footerText, { color: brandSecondary }]}>Already have an account?</Text>
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Log In"
@@ -266,7 +266,7 @@ export default function SignUpScreen() {
           }}
           style={({ pressed }) => pressed && { transform: [{ scale: 0.95 }] }}
         >
-          <Text style={[styles.linkText, { color: jarsPrimary }]}>Log In</Text>
+          <Text style={[styles.linkText, { color: brandPrimary }]}>Log In</Text>
         </Pressable>
       </View>
     </SafeAreaView>

@@ -12,7 +12,7 @@ type NavProp = NativeStackNavigationProp<RootStackParamList, 'MyJars'>;
 
 export default function MyJarsScreen() {
   const navigation = useNavigation<NavProp>();
-  const { jarsPrimary } = useContext(ThemeContext);
+  const { brandPrimary } = useContext(ThemeContext);
 
   const openInsights = () => {
     hapticLight();
@@ -22,9 +22,9 @@ export default function MyJarsScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={[styles.title, { color: jarsPrimary }]}>My Jars</Text>
+        <Text style={[styles.title, { color: brandPrimary }]}>My Stash</Text>
         <Pressable onPress={openInsights} hitSlop={8}>
-          <BarChart color={jarsPrimary} />
+          <BarChart color={brandPrimary} />
         </Pressable>
       </View>
       <View style={styles.empty}>

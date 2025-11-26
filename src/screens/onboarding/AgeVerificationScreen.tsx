@@ -13,7 +13,7 @@ interface NavProp extends NativeStackNavigationProp<RootStackParamList, 'AgeVeri
 
 export default function AgeVerificationScreen() {
   const navigation = useNavigation<NavProp>();
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
 
   useEffect(() => {
@@ -39,24 +39,24 @@ export default function AgeVerificationScreen() {
   };
 
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]}>
       <View style={styles.content}>
-        <Text style={[styles.title, { color: jarsPrimary }]}>21+ Only</Text>
-        <Text style={[styles.subtitle, { color: jarsSecondary }]}>
+        <Text style={[styles.title, { color: brandPrimary }]}>21+ Only</Text>
+        <Text style={[styles.subtitle, { color: brandSecondary }]}>
           You must be at least 21 years old to use this app.
         </Text>
         <Pressable
-          style={[styles.button, { backgroundColor: jarsPrimary }]}
+          style={[styles.button, { backgroundColor: brandPrimary }]}
           accessibilityRole="button"
           onPress={handleConfirm}
         >
           <Text style={styles.buttonText}>I am 21 or older</Text>
         </Pressable>
         <Pressable onPress={() => setShowDisclaimer(true)}>
-          <Text style={[styles.link, { color: jarsPrimary }]}>View Disclaimer</Text>
+          <Text style={[styles.link, { color: brandPrimary }]}>View Disclaimer</Text>
         </Pressable>
       </View>
       <LegalDisclaimerModal visible={showDisclaimer} onClose={() => setShowDisclaimer(false)} />

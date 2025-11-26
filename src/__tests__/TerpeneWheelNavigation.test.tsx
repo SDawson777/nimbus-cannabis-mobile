@@ -12,9 +12,9 @@ const Stack = createNativeStackNavigator();
 jest.mock('../context/ThemeContext', () => ({
   ThemeContext: require('react').createContext({
     colorTemp: 'neutral',
-    jarsPrimary: '#4CAF50',
-    jarsSecondary: '#A0A0A0',
-    jarsBackground: '#ffffff',
+    brandPrimary: '#4CAF50',
+    brandSecondary: '#A0A0A0',
+    brandBackground: '#ffffff',
   }),
 }));
 

@@ -83,9 +83,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.jars.dev.android'
+    namespace 'com.nimbus.cannabis.dev.android'
     defaultConfig {
-        applicationId 'com.jars.dev.android'
+        applicationId 'com.nimbus.cannabis.dev.android'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

@@ -37,7 +37,7 @@ interface Post {
 
 export default function CommunityGardenScreen() {
   const navigation = useNavigation<CommunityNavProp>();
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -61,7 +61,7 @@ export default function CommunityGardenScreen() {
   }, []);
 
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   const handleBack = () => {
     hapticLight();
@@ -77,17 +77,17 @@ export default function CommunityGardenScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]}>
       {/* Header */}
-      <View style={[styles.header, { borderBottomColor: jarsSecondary }]}>
+      <View style={[styles.header, { borderBottomColor: brandSecondary }]}>
         <Pressable onPress={handleBack}>
-          <ChevronLeft color={jarsPrimary} size={24} />
+          <ChevronLeft color={brandPrimary} size={24} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: jarsPrimary }]}>Community Garden</Text>
+        <Text style={[styles.headerTitle, { color: brandPrimary }]}>Community Garden</Text>
         <View style={{ width: 24 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
         {loading && (
-          <Text style={[styles.statusText, { color: jarsSecondary }]}>Loading posts...</Text>
+          <Text style={[styles.statusText, { color: brandSecondary }]}>Loading posts...</Text>
         )}
         {!loading && error ? (
           <Text style={[styles.statusText, { color: 'red' }]}>{error}</Text>
@@ -95,9 +95,9 @@ export default function CommunityGardenScreen() {
           posts.map(post => (
             <Pressable
               key={post.id}
-              style={[styles.postCard, { backgroundColor: jarsBackground }]}
+              style={[styles.postCard, { backgroundColor: brandBackground }]}
               onPress={handlePostPress}
-              android_ripple={{ color: `${jarsSecondary}20` }}
+              android_ripple={{ color: `${brandSecondary}20` }}
             >
               <View style={styles.postHeader}>
                 <Image
@@ -107,11 +107,11 @@ export default function CommunityGardenScreen() {
                   style={styles.avatar}
                 />
                 <View>
-                  <Text style={[styles.username, { color: jarsPrimary }]}>{post.user}</Text>
-                  <Text style={[styles.time, { color: jarsSecondary }]}>{post.time}</Text>
+                  <Text style={[styles.username, { color: brandPrimary }]}>{post.user}</Text>
+                  <Text style={[styles.time, { color: brandSecondary }]}>{post.time}</Text>
                 </View>
               </View>
-              <Text style={[styles.postText, { color: jarsPrimary }]}>{post.text}</Text>
+              <Text style={[styles.postText, { color: brandPrimary }]}>{post.text}</Text>
             </Pressable>
           ))
         )}

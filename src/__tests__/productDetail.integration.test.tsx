@@ -48,9 +48,9 @@ describe('ProductDetailScreen integration', () => {
 
     const theme = {
       colorTemp: 'neutral' as const,
-      jarsPrimary: '#000',
-      jarsSecondary: '#666',
-      jarsBackground: '#fff',
+      brandPrimary: '#000',
+      brandSecondary: '#666',
+      brandBackground: '#fff',
       loading: false,
       debugInfo: {
         weatherSource: 'time-of-day' as const,

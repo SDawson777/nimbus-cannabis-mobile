@@ -18,7 +18,7 @@ type ForgotPasswordNavProp = NativeStackNavigationProp<RootStackParamList, 'Forg
 
 export default function ForgotPasswordScreen() {
   const navigation = useNavigation<ForgotPasswordNavProp>();
-  const { jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
 
   const form = useForm<ForgotPasswordFormData>({
     resolver: yupResolver(forgotPasswordSchema),
@@ -41,7 +41,7 @@ export default function ForgotPasswordScreen() {
   return (
     <SafeAreaView
       className="flex-1 p-4"
-      style={{ backgroundColor: jarsBackground }}
+      style={{ backgroundColor: brandBackground }}
       accessibilityViewIsModal
     >
       <Pressable
@@ -51,7 +51,7 @@ export default function ForgotPasswordScreen() {
         onPress={() => navigation.goBack()}
         className="mb-6 w-20"
       >
-        <Text style={{ color: jarsPrimary }}>{'<'} Back</Text>
+        <Text style={{ color: brandPrimary }}>{'<'} Back</Text>
       </Pressable>
       <View className="flex-1">
         <Controller
@@ -65,8 +65,8 @@ export default function ForgotPasswordScreen() {
             <TextInput
               className="border rounded-lg p-3 mb-2"
               style={{
-                borderColor: errors.email ? 'red' : jarsSecondary,
-                color: jarsPrimary,
+                borderColor: errors.email ? 'red' : brandSecondary,
+                color: brandPrimary,
                 backgroundColor: '#FFF',
               }}
               placeholder="you@example.com"
@@ -88,7 +88,7 @@ export default function ForgotPasswordScreen() {
           onPress={handleSubmit(onSubmit)}
           disabled={!isValid || isSubmitting}
           className={`rounded-lg py-3 items-center ${isValid ? '' : 'opacity-50'}`}
-          style={{ backgroundColor: jarsPrimary }}
+          style={{ backgroundColor: brandPrimary }}
         >
           {isSubmitting ? (
             <ActivityIndicator color="#FFF" />

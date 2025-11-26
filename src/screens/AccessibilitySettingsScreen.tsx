@@ -39,9 +39,9 @@ type AccessibilityNavProp = NativeStackNavigationProp<RootStackParamList, 'Acces
 
 export default function AccessibilitySettingsScreen() {
   const navigation = useNavigation<AccessibilityNavProp>();
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   const [prefs, setPrefs] = useState<AccessibilityPrefs | null>(null);
   const [loading, setLoading] = useState(true);
@@ -104,7 +104,7 @@ export default function AccessibilitySettingsScreen() {
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]}>
         <View style={styles.errorContainer}>
-          <Text style={[styles.errorText, { color: jarsPrimary }]}>Error: {error}</Text>
+          <Text style={[styles.errorText, { color: brandPrimary }]}>Error: {error}</Text>
           <Button
             title="Retry"
             onPress={() => {
@@ -115,7 +115,7 @@ export default function AccessibilitySettingsScreen() {
                 .catch(err => setError(err.message))
                 .finally(() => setLoading(false));
             }}
-            color={jarsPrimary}
+            color={brandPrimary}
           />
         </View>
       </SafeAreaView>
@@ -128,43 +128,43 @@ export default function AccessibilitySettingsScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]}>
       {/* Header */}
-      <View style={[styles.header, { borderBottomColor: jarsSecondary }]}>
+      <View style={[styles.header, { borderBottomColor: brandSecondary }]}>
         <Pressable onPress={handleBack}>
-          <ChevronLeft color={jarsPrimary} size={24} />
+          <ChevronLeft color={brandPrimary} size={24} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: jarsPrimary }]}>Accessibility Settings</Text>
+        <Text style={[styles.headerTitle, { color: brandPrimary }]}>Accessibility Settings</Text>
         <View style={{ width: 24 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.row}>
-          <Text style={[styles.label, { color: jarsPrimary }]}>Dyslexia-friendly Font</Text>
+          <Text style={[styles.label, { color: brandPrimary }]}>Dyslexia-friendly Font</Text>
           <Switch
             value={prefs.dyslexiaFont}
             onValueChange={() => handleToggle('dyslexiaFont')}
-            trackColor={{ true: jarsPrimary, false: '#ccc' }}
+            trackColor={{ true: brandPrimary, false: '#ccc' }}
           />
         </View>
 
         <View style={styles.row}>
-          <Text style={[styles.label, { color: jarsPrimary }]}>High Contrast</Text>
+          <Text style={[styles.label, { color: brandPrimary }]}>High Contrast</Text>
           <Switch
             value={prefs.highContrast}
             onValueChange={() => handleToggle('highContrast')}
-            trackColor={{ true: jarsPrimary, false: '#ccc' }}
+            trackColor={{ true: brandPrimary, false: '#ccc' }}
           />
         </View>
 
         <View style={styles.row}>
-          <Text style={[styles.label, { color: jarsPrimary }]}>Reduce Motion</Text>
+          <Text style={[styles.label, { color: brandPrimary }]}>Reduce Motion</Text>
           <Switch
             value={prefs.reducedMotion}
             onValueChange={() => handleToggle('reducedMotion')}
-            trackColor={{ true: jarsPrimary, false: '#ccc' }}
+            trackColor={{ true: brandPrimary, false: '#ccc' }}
           />
         </View>
 
-        <Button title="Save" onPress={handleSave} color={jarsPrimary} disabled={loading} />
+        <Button title="Save" onPress={handleSave} color={brandPrimary} disabled={loading} />
       </ScrollView>
     </SafeAreaView>
   );

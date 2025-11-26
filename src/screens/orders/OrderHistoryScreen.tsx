@@ -21,7 +21,7 @@ import { toast } from '../../utils/toast';
 import OrderDetailModal from './OrderDetailModal';
 
 export default function OrderHistoryScreen() {
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
   const [selected, setSelected] = useState<Order | null>(null);
 
   const {
@@ -49,7 +49,7 @@ export default function OrderHistoryScreen() {
   }, [error]);
 
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]}>
@@ -65,7 +65,7 @@ export default function OrderHistoryScreen() {
         </View>
       ) : orders.length === 0 ? (
         <View style={styles.emptyState}>
-          <Text style={{ color: jarsSecondary }}>You haven’t placed any orders yet.</Text>
+          <Text style={{ color: brandSecondary }}>You haven’t placed any orders yet.</Text>
         </View>
       ) : (
         <FlatList
@@ -78,8 +78,8 @@ export default function OrderHistoryScreen() {
                 hapticLight();
                 setSelected(item);
               }}
-              primaryColor={jarsPrimary}
-              secondaryColor={jarsSecondary}
+              primaryColor={brandPrimary}
+              secondaryColor={brandSecondary}
             />
           )}
           refreshControl={

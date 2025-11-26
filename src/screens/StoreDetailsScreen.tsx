@@ -40,14 +40,14 @@ export default function StoreDetailsScreen() {
   const route = useRoute<StoreDetailsRouteProp>();
   const store: Store = route.params.store;
 
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
 
   useEffect(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
   }, []);
 
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   const handleBack = () => {
     hapticLight();
@@ -63,28 +63,28 @@ export default function StoreDetailsScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]}>
       {/* Header */}
-      <View style={[styles.header, { borderBottomColor: jarsSecondary }]}>
+      <View style={[styles.header, { borderBottomColor: brandSecondary }]}>
         <Pressable onPress={handleBack}>
-          <ChevronLeft color={jarsPrimary} size={24} />
+          <ChevronLeft color={brandPrimary} size={24} />
         </Pressable>
-        <Text style={[styles.title, { color: jarsPrimary }]}>{store.name}</Text>
+        <Text style={[styles.title, { color: brandPrimary }]}>{store.name}</Text>
         <View style={{ width: 24 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.infoRow}>
-          <Clock color={jarsSecondary} size={20} style={{ marginRight: 8 }} />
-          <Text style={[styles.infoText, { color: jarsSecondary }]}>{store.hours}</Text>
+          <Clock color={brandSecondary} size={20} style={{ marginRight: 8 }} />
+          <Text style={[styles.infoText, { color: brandSecondary }]}>{store.hours}</Text>
         </View>
         <View style={styles.infoRow}>
-          <Phone color={jarsSecondary} size={20} style={{ marginRight: 8 }} />
-          <Text style={[styles.infoText, { color: jarsSecondary }]}>{store.phone}</Text>
+          <Phone color={brandSecondary} size={20} style={{ marginRight: 8 }} />
+          <Text style={[styles.infoText, { color: brandSecondary }]}>{store.phone}</Text>
         </View>
         <View style={styles.infoRow}>
-          <Text style={[styles.address, { color: jarsPrimary }]}>{store.address}</Text>
+          <Text style={[styles.address, { color: brandPrimary }]}>{store.address}</Text>
         </View>
 
-        <Pressable style={[styles.callBtn, { backgroundColor: jarsPrimary }]} onPress={callStore}>
+        <Pressable style={[styles.callBtn, { backgroundColor: brandPrimary }]} onPress={callStore}>
           <Text style={styles.callText}>Call Store</Text>
         </Pressable>
       </ScrollView>

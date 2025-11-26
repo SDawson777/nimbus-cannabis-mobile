@@ -33,7 +33,7 @@ const ITEMS = [
 
 export default function FavoritesScreen() {
   const navigation = useNavigation<FavoritesNavProp>();
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
   const [favorites, setFavorites] = useState<string[]>(ITEMS.map(i => i.id));
 
   useEffect(() => {
@@ -41,7 +41,7 @@ export default function FavoritesScreen() {
   }, [favorites]);
 
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   const toggleFav = (id: string) => {
     hapticMedium();
@@ -58,11 +58,11 @@ export default function FavoritesScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]}>
       {/* Header */}
-      <View style={[styles.header, { borderBottomColor: jarsSecondary }]}>
+      <View style={[styles.header, { borderBottomColor: brandSecondary }]}>
         <Pressable onPress={handleBack}>
-          <ChevronLeft color={jarsPrimary} size={24} />
+          <ChevronLeft color={brandPrimary} size={24} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: jarsPrimary }]}>Favorites</Text>
+        <Text style={[styles.headerTitle, { color: brandPrimary }]}>Favorites</Text>
         <View style={{ width: 24 }} />
       </View>
       {/* List */}
@@ -71,10 +71,10 @@ export default function FavoritesScreen() {
         keyExtractor={i => i.id}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
-          <View style={[styles.row, { borderBottomColor: jarsSecondary }]}>
-            <Text style={[styles.name, { color: jarsPrimary }]}>{item.name}</Text>
+          <View style={[styles.row, { borderBottomColor: brandSecondary }]}>
+            <Text style={[styles.name, { color: brandPrimary }]}>{item.name}</Text>
             <Pressable onPress={() => toggleFav(item.id)}>
-              <HeartIcon color={favorites.includes(item.id) ? jarsPrimary : '#CCCCCC'} size={24} />
+              <HeartIcon color={favorites.includes(item.id) ? brandPrimary : '#CCCCCC'} size={24} />
             </Pressable>
           </View>
         )}

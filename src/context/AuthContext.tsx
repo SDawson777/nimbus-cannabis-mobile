@@ -91,10 +91,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                     LocalAuthentication.AuthenticationType.FINGERPRINT
                   );
                   const promptMessage = useFace
-                    ? 'Unlock Jars with Face ID'
+                    ? 'Unlock Nimbus with Face ID'
                     : usePrint
-                      ? 'Unlock Jars with Touch ID'
-                      : 'Unlock Jars';
+                      ? 'Unlock Nimbus with Touch ID'
+                      : 'Unlock Nimbus';
                   hapticLight();
                   const authPromise = LocalAuthentication.authenticateAsync({
                     promptMessage,

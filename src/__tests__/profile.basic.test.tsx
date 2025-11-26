@@ -44,9 +44,9 @@ const mockAuthContext = {
 // Mock theme context
 const mockThemeContext = {
   colorTemp: 'neutral' as const,
-  jarsPrimary: '#2E8B57',
-  jarsSecondary: '#FFD700',
-  jarsBackground: '#F9F9F9',
+  brandPrimary: '#2E8B57',
+  brandSecondary: '#FFD700',
+  brandBackground: '#F9F9F9',
   loading: false,
   debugInfo: {
     weatherSource: 'time-of-day' as const,

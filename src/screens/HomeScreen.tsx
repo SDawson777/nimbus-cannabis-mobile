@@ -60,7 +60,7 @@ type Way = { id: string; label: string };
 
 export default function HomeScreen() {
   const navigation = useNavigation<HomeNavProp>();
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
   const { data: user } = useContext(AuthContext);
   const { preferredStore } = useStore();
   const { data: forYou, isLoading } = useForYouToday(user?.id, preferredStore?.id);
@@ -161,7 +161,7 @@ export default function HomeScreen() {
   }, []);
 
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   const openCart = () => {
     hapticLight();
@@ -195,7 +195,7 @@ export default function HomeScreen() {
         </View>
 
         <Pressable style={styles.locationRow}>
-          <MapPin color={jarsPrimary} size={16} />
+          <MapPin color={brandPrimary} size={16} />
           <Text style={styles.pickupText}>Pickup from:</Text>
           <Text style={styles.locationText}>Downtown</Text>
           <ChevronDown color="#777" size={16} />
@@ -208,7 +208,7 @@ export default function HomeScreen() {
             placeholderTextColor="#777"
             style={styles.searchInput}
           />
-          <Pressable style={[styles.searchBtn, { backgroundColor: jarsPrimary }]}>
+          <Pressable style={[styles.searchBtn, { backgroundColor: brandPrimary }]}>
             <Text style={styles.searchBtnText}>Search</Text>
           </Pressable>
         </View>
@@ -221,13 +221,13 @@ export default function HomeScreen() {
           <Text style={styles.heroTitle}>Price Drop</Text>
           <Text style={styles.heroSub}>New Everyday Low Pricing</Text>
           <Pressable style={styles.heroBtn}>
-            <Text style={[styles.heroBtnText, { color: jarsPrimary }]}>Shop Deli</Text>
+            <Text style={[styles.heroBtnText, { color: brandPrimary }]}>Shop Deli</Text>
           </Pressable>
         </View>
 
         {/* AI Strain Finder CTA */}
         <Pressable
-          style={[styles.strainFinderCTA, { backgroundColor: jarsSecondary }]}
+          style={[styles.strainFinderCTA, { backgroundColor: brandSecondary }]}
           onPress={() => {
             hapticLight();
             navigation.navigate('StrainFinder');
@@ -263,9 +263,9 @@ export default function HomeScreen() {
 
         {/* Categories */}
         <View style={styles.sectionHeader}>
-          <Text style={[styles.sectionTitle, { color: jarsPrimary }]}>Shop By Categories</Text>
+          <Text style={[styles.sectionTitle, { color: brandPrimary }]}>Shop By Categories</Text>
           <Pressable onPress={() => navigation.navigate('ShopScreen')}>
-            <Text style={[styles.seeMore, { color: jarsPrimary }]}>See More</Text>
+            <Text style={[styles.seeMore, { color: brandPrimary }]}>See More</Text>
           </Pressable>
         </View>
         {categoriesLoading ? (
@@ -300,10 +300,10 @@ export default function HomeScreen() {
 
         {/* Featured Products */}
         <View style={styles.sectionHeader}>
-          <Text style={[styles.sectionTitle, { color: jarsPrimary }]}>Featured Products</Text>
+          <Text style={[styles.sectionTitle, { color: brandPrimary }]}>Featured Products</Text>
           <Pressable onPress={shopCTAPulse.onPress}>
             <Animated.Text
-              style={[styles.seeMore, { color: jarsPrimary }, shopCTAPulse.pulseStyle]}
+              style={[styles.seeMore, { color: brandPrimary }, shopCTAPulse.pulseStyle]}
             >
               Shop All
             </Animated.Text>
@@ -320,7 +320,7 @@ export default function HomeScreen() {
             {featured.map(item => (
               <Pressable
                 key={item.id}
-                style={[styles.productCard, { borderColor: jarsPrimary }]}
+                style={[styles.productCard, { borderColor: brandPrimary }]}
                 onPress={() => navigation.navigate('ProductDetail', { slug: item.id })}
               >
                 {item.image ? (
@@ -328,8 +328,8 @@ export default function HomeScreen() {
                 ) : (
                   <View style={[styles.productImage, { backgroundColor: '#E0E0E0' }]} />
                 )}
-                <Text style={[styles.productName, { color: jarsPrimary }]}>{item.name}</Text>
-                <Text style={[styles.productPrice, { color: jarsSecondary }]}>
+                <Text style={[styles.productName, { color: brandPrimary }]}>{item.name}</Text>
+                <Text style={[styles.productPrice, { color: brandSecondary }]}>
                   ${item.price.toFixed(2)}
                 </Text>
               </Pressable>
@@ -341,9 +341,9 @@ export default function HomeScreen() {
 
         {/* Your Weed Your Way */}
         <View style={styles.sectionHeader}>
-          <Text style={[styles.sectionTitle, { color: jarsPrimary }]}>Your Weed Your Way</Text>
+          <Text style={[styles.sectionTitle, { color: brandPrimary }]}>Your Weed Your Way</Text>
           <Pressable onPress={() => navigation.navigate('ShopScreen')}>
-            <Text style={[styles.seeMore, { color: jarsPrimary }]}>See More</Text>
+            <Text style={[styles.seeMore, { color: brandPrimary }]}>See More</Text>
           </Pressable>
         </View>
         {waysLoading ? (
@@ -376,7 +376,7 @@ export default function HomeScreen() {
 
         {/* Educational Content CTA */}
         <View style={styles.sectionHeader}>
-          <Text style={[styles.sectionTitle, { color: jarsPrimary }]}>Educational Resources</Text>
+          <Text style={[styles.sectionTitle, { color: brandPrimary }]}>Educational Resources</Text>
         </View>
         <Pressable
           testID="terpene-wheel-cta"
@@ -399,8 +399,8 @@ export default function HomeScreen() {
           style={styles.navItem}
           testID="home-tab"
         >
-          <Home color={jarsPrimary} size={24} />
-          <Text style={[styles.navLabel, { color: jarsPrimary }]}>Home</Text>
+          <Home color={brandPrimary} size={24} />
+          <Text style={[styles.navLabel, { color: brandPrimary }]}>Home</Text>
         </Pressable>
         <Pressable
           onPress={() => navigation.navigate('ShopScreen')}

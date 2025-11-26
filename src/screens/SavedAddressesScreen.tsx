@@ -43,7 +43,7 @@ interface Address {
 
 export default function SavedAddressesScreen() {
   const navigation = useNavigation<SavedAddressesNavProp>();
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
   const { data: addresses = [] } = useQuery({
     queryKey: ['addresses'],
     queryFn: getAddresses,
@@ -54,7 +54,7 @@ export default function SavedAddressesScreen() {
   }, [addresses]);
 
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   const handleEdit = (addr: Address) => {
     hapticMedium();
@@ -76,35 +76,35 @@ export default function SavedAddressesScreen() {
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
           <Pressable
-            style={[styles.row, { borderBottomColor: jarsSecondary }]}
-            android_ripple={{ color: `${jarsSecondary}20` }}
+            style={[styles.row, { borderBottomColor: brandSecondary }]}
+            android_ripple={{ color: `${brandSecondary}20` }}
             onPress={() => handleEdit(item)}
           >
             <View>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Text style={[styles.label, { color: jarsPrimary }]}>{item.fullName}</Text>
+                <Text style={[styles.label, { color: brandPrimary }]}>{item.fullName}</Text>
                 {item.isDefault ? (
-                  <View style={[styles.defaultBadge, { borderColor: jarsSecondary }]}>
-                    <Text style={[styles.defaultText, { color: jarsSecondary }]}>Default</Text>
+                  <View style={[styles.defaultBadge, { borderColor: brandSecondary }]}>
+                    <Text style={[styles.defaultText, { color: brandSecondary }]}>Default</Text>
                   </View>
                 ) : null}
               </View>
-              <Text style={[styles.subLabel, { color: jarsSecondary }]}>
+              <Text style={[styles.subLabel, { color: brandSecondary }]}>
                 {item.line1}
                 {item.city ? ', ' + item.city : ''}
               </Text>
             </View>
-            <ChevronRight color={jarsPrimary} size={20} />
+            <ChevronRight color={brandPrimary} size={20} />
           </Pressable>
         )}
         ListFooterComponent={
           <Pressable
-            style={[styles.addBtn, { borderColor: jarsSecondary }]}
-            android_ripple={{ color: `${jarsSecondary}20` }}
+            style={[styles.addBtn, { borderColor: brandSecondary }]}
+            android_ripple={{ color: `${brandSecondary}20` }}
             onPress={handleAdd}
           >
-            <Plus color={jarsSecondary} size={20} />
-            <Text style={[styles.addText, { color: jarsSecondary }]}>Add New Address</Text>
+            <Plus color={brandSecondary} size={20} />
+            <Text style={[styles.addText, { color: brandSecondary }]}>Add New Address</Text>
           </Pressable>
         }
       />

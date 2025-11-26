@@ -38,7 +38,7 @@ interface PaymentMethod {
 
 export default function SavedPaymentsScreen() {
   const navigation = useNavigation<SavedPaymentsNavProp>();
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
   const { data: methods = [], isLoading } = useQuery<PaymentMethod[]>({
     queryKey: ['paymentMethods'],
     queryFn: getPaymentMethods,
@@ -49,12 +49,12 @@ export default function SavedPaymentsScreen() {
   }, [methods]);
 
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   const glowStyle =
     colorTemp === 'warm'
       ? {
-          shadowColor: jarsSecondary,
+          shadowColor: brandSecondary,
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.3,
           shadowRadius: 8,
@@ -90,29 +90,29 @@ export default function SavedPaymentsScreen() {
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
           <Pressable
-            style={[styles.row, { borderBottomColor: jarsSecondary }]}
-            android_ripple={{ color: `${jarsSecondary}20` }}
+            style={[styles.row, { borderBottomColor: brandSecondary }]}
+            android_ripple={{ color: `${brandSecondary}20` }}
             onPress={() => handleEdit(item)}
           >
-            <Text style={[styles.label, { color: jarsPrimary }]}>
+            <Text style={[styles.label, { color: brandPrimary }]}>
               {item.cardBrand ? `${item.cardBrand} ****${item.cardLast4 ?? ''}` : item.holderName}
               {item.isDefault ? ' (Default)' : ''}
             </Text>
-            <ChevronRight color={jarsPrimary} size={20} />
+            <ChevronRight color={brandPrimary} size={20} />
           </Pressable>
         )}
         ListFooterComponent={
           <Pressable
-            style={[styles.addBtn, { borderColor: jarsSecondary }, glowStyle]}
-            android_ripple={{ color: `${jarsSecondary}20` }}
+            style={[styles.addBtn, { borderColor: brandSecondary }, glowStyle]}
+            android_ripple={{ color: `${brandSecondary}20` }}
             onPress={handleAdd}
           >
-            <Plus color={jarsSecondary} size={20} />
-            <Text style={[styles.addText, { color: jarsSecondary }]}>Add New Payment</Text>
+            <Plus color={brandSecondary} size={20} />
+            <Text style={[styles.addText, { color: brandSecondary }]}>Add New Payment</Text>
           </Pressable>
         }
       />
-      {isLoading && <Text style={{ padding: 16, color: jarsSecondary }}>Loading...</Text>}
+      {isLoading && <Text style={{ padding: 16, color: brandSecondary }}>Loading...</Text>}
     </SafeAreaView>
   );
 }

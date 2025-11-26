@@ -35,7 +35,7 @@ const IMAGE_SIZE = 80;
 
 export default function CartScreen() {
   const navigation = useNavigation<CartNavProp>();
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
 
   // Use cart from useCart hook instead of Zustand directly
   const { cart, updateCart, applyPromo, isLoading } = useCart();
@@ -51,13 +51,13 @@ export default function CartScreen() {
 
   // Dynamic background
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   // Glow for Checkout button
   const glowStyle =
     colorTemp === 'warm'
       ? {
-          shadowColor: jarsPrimary,
+          shadowColor: brandPrimary,
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.3,
           shadowRadius: 8,
@@ -167,11 +167,11 @@ export default function CartScreen() {
             navigation.goBack();
           }}
         >
-          <ChevronLeft color={jarsPrimary} size={24} />
+          <ChevronLeft color={brandPrimary} size={24} />
         </Pressable>
-        <Text style={[styles.title, { color: jarsPrimary }]}>Your Cart</Text>
+        <Text style={[styles.title, { color: brandPrimary }]}>Your Cart</Text>
         <Pressable onPress={goToHelp}>
-          <HelpCircle color={jarsPrimary} size={24} />
+          <HelpCircle color={brandPrimary} size={24} />
         </Pressable>
       </View>
 
@@ -189,21 +189,23 @@ export default function CartScreen() {
               style={styles.image}
             />
             <View style={styles.info}>
-              <Text style={[styles.name, { color: jarsPrimary }]}>{item.name}</Text>
-              <Text style={[styles.price, { color: jarsSecondary }]}>${item.price.toFixed(2)}</Text>
+              <Text style={[styles.name, { color: brandPrimary }]}>{item.name}</Text>
+              <Text style={[styles.price, { color: brandSecondary }]}>
+                ${item.price.toFixed(2)}
+              </Text>
               <View style={styles.qtyRow}>
                 <Pressable
                   onPress={() => updateQty(item.id, -1)}
-                  style={[styles.qtyBtn, { backgroundColor: jarsSecondary + '20' }]}
+                  style={[styles.qtyBtn, { backgroundColor: brandSecondary + '20' }]}
                   testID={`decrease-quantity-${item.id}`}
                   accessibilityLabel={`Decrease quantity of ${item.name}`}
                 >
                   <Text style={styles.qtyBtnText}>−</Text>
                 </Pressable>
-                <Text style={[styles.qty, { color: jarsPrimary }]}>{item.quantity}</Text>
+                <Text style={[styles.qty, { color: brandPrimary }]}>{item.quantity}</Text>
                 <Pressable
                   onPress={() => updateQty(item.id, 1)}
-                  style={[styles.qtyBtn, { backgroundColor: jarsSecondary + '20' }]}
+                  style={[styles.qtyBtn, { backgroundColor: brandSecondary + '20' }]}
                   testID={`increase-quantity-${item.id}`}
                   accessibilityLabel={`Increase quantity of ${item.name}`}
                 >
@@ -215,7 +217,7 @@ export default function CartScreen() {
                   testID={`remove-item-${item.id}`}
                   accessibilityLabel={`Remove ${item.name} from cart`}
                 >
-                  <Trash2 color={jarsPrimary} size={20} />
+                  <Trash2 color={brandPrimary} size={20} />
                 </Pressable>
               </View>
             </View>
@@ -226,15 +228,15 @@ export default function CartScreen() {
       {/* Promo Code */}
       <View style={styles.promoSection}>
         <TextInput
-          style={[styles.promoInput, { borderColor: jarsSecondary, color: jarsPrimary }]}
+          style={[styles.promoInput, { borderColor: brandSecondary, color: brandPrimary }]}
           placeholder="Enter Promo Code"
-          placeholderTextColor={jarsSecondary}
+          placeholderTextColor={brandSecondary}
           value={promo}
           testID="coupon-input"
           onChangeText={setPromo}
         />
         <Pressable
-          style={[styles.promoBtn, { backgroundColor: jarsPrimary }, glowStyle]}
+          style={[styles.promoBtn, { backgroundColor: brandPrimary }, glowStyle]}
           onPress={applyPromoCode}
         >
           <Text style={styles.promoBtnText}>Apply</Text>
@@ -243,7 +245,7 @@ export default function CartScreen() {
 
       {/* Order Summary */}
       <View style={[styles.summary, { backgroundColor: '#FFF' }]} testID="cart-total">
-        <Text style={[styles.summaryTitle, { color: jarsPrimary }]}>Order Summary</Text>
+        <Text style={[styles.summaryTitle, { color: brandPrimary }]}>Order Summary</Text>
         <View style={styles.line}>
           <Text style={styles.lineLabel}>Subtotal</Text>
           <Text style={styles.lineValue}>${subtotal.toFixed(2)}</Text>
@@ -258,14 +260,14 @@ export default function CartScreen() {
         </View>
         <View style={styles.lineTotal}>
           <Text style={styles.totalLabel}>Total</Text>
-          <Text style={[styles.totalValue, { color: jarsPrimary }]}>${total.toFixed(2)}</Text>
+          <Text style={[styles.totalValue, { color: brandPrimary }]}>${total.toFixed(2)}</Text>
         </View>
       </View>
 
       {/* Proceed to Checkout */}
       <Pressable
         testID="checkout-button"
-        style={[styles.checkoutBtn, { backgroundColor: jarsPrimary }, glowStyle]}
+        style={[styles.checkoutBtn, { backgroundColor: brandPrimary }, glowStyle]}
         onPress={() => {
           hapticMedium();
           LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);

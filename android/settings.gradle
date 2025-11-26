@@ -1,26 +1,4 @@
-rootProject.name = 'JARS'
-
-// Ensure Gradle plugin repositories are available for plugin resolution (expo-module-gradle-plugin, etc.)
-pluginManagement {
-  repositories {
-    gradlePluginPortal()
-    google()
-    mavenCentral()
-    maven { url 'https://plugins.gradle.org/m2/' }
-  }
-}
-
-// Provide a resolution strategy for expo-module-gradle-plugin so Gradle can locate it
-pluginManagement {
-  resolutionStrategy {
-    eachPlugin {
-      if (requested.id.id == 'expo-module-gradle-plugin') {
-        // Map plugin id to module artifact. Version mirrors expo-modules-core package version.
-        useModule("host.exp.exponent:expo-module-gradle-plugin:1.11.14")
-      }
-    }
-  }
-}
+rootProject.name = 'Nimbus Cannabis OS'
 
 dependencyResolutionManagement {
   versionCatalogs {
@@ -38,13 +16,3 @@ applyNativeModulesSettingsGradle(settings)
 
 include ':app'
 includeBuild(new File(["node", "--print", "require.resolve('@react-native/gradle-plugin/package.json', { paths: [require.resolve('react-native/package.json')] })"].execute(null, rootDir).text.trim()).getParentFile())
-
-// Ensure expo-modules-core is available to the plugin DSL during Gradle configuration
-try {
-  def expoModulesCore = new File(rootDir, 'node_modules/expo-modules-core/android')
-  if (expoModulesCore.exists()) {
-    includeBuild(expoModulesCore)
-  }
-} catch (e) {
-  // ignore if not present in this environment
-}

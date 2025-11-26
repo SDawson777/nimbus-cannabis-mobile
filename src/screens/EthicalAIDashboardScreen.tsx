@@ -11,11 +11,11 @@ import { hapticLight } from '../utils/haptic';
 
 export default function EthicalAIDashboardScreen() {
   const navigation = useNavigation();
-  const { jarsPrimary, jarsBackground } = useContext(ThemeContext);
+  const { brandPrimary, brandBackground } = useContext(ThemeContext);
   const { data } = useDataCategories();
   const { data: prefs, updatePreferences } = usePrivacyPreferences();
 
-  const bgColor = jarsBackground;
+  const bgColor = brandBackground;
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]}>
@@ -26,9 +26,9 @@ export default function EthicalAIDashboardScreen() {
             navigation.goBack();
           }}
         >
-          <ChevronLeft color={jarsPrimary} size={24} />
+          <ChevronLeft color={brandPrimary} size={24} />
         </Pressable>
-        <Text style={[styles.title, { color: jarsPrimary }]}>Ethical AI Dashboard</Text>
+        <Text style={[styles.title, { color: brandPrimary }]}>Ethical AI Dashboard</Text>
         <View style={{ width: 24 }} />
       </View>
 
@@ -39,7 +39,7 @@ export default function EthicalAIDashboardScreen() {
           accessibilityLabel="Toggle high contrast mode"
           style={styles.toggle}
         >
-          <Text style={{ color: jarsPrimary }}>
+          <Text style={{ color: brandPrimary }}>
             High Contrast: {prefs.highContrast ? 'On' : 'Off'}
           </Text>
         </Pressable>

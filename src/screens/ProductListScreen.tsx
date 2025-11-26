@@ -28,7 +28,7 @@ type NavProp = NativeStackNavigationProp<RootStackParamList, 'ProductList'>;
 
 export default function ProductListScreen() {
   const navigation = useNavigation<NavProp>();
-  const { colorTemp, jarsPrimary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandBackground } = useContext(ThemeContext);
   const { data, isLoading } = useCMSProducts();
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function ProductListScreen() {
   }, []);
 
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
 
   if (isLoading) {
     return (
@@ -68,11 +68,11 @@ export default function ProductListScreen() {
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
           <Pressable
-            style={[styles.card, { borderColor: jarsPrimary }]}
+            style={[styles.card, { borderColor: brandPrimary }]}
             onPress={() => openProduct(item.slug)}
           >
             <CMSImage uri={item.image.url} alt={item.name} style={styles.image} />
-            <Text style={[styles.name, { color: jarsPrimary }]}>{item.name}</Text>
+            <Text style={[styles.name, { color: brandPrimary }]}>{item.name}</Text>
             <Text style={styles.price}>${item.price.toFixed(2)}</Text>
           </Pressable>
         )}

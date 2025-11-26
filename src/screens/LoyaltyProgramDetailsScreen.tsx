@@ -30,7 +30,7 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
 
 export default function LoyaltyProgramDetailsScreen() {
   const navigation = useNavigation();
-  const { colorTemp, jarsPrimary, jarsSecondary, jarsBackground } = useContext(ThemeContext);
+  const { colorTemp, brandPrimary, brandSecondary, brandBackground } = useContext(ThemeContext);
   const { data: loyalty } = useContext(LoyaltyContext);
   const queryClient = useQueryClient();
 
@@ -48,7 +48,7 @@ export default function LoyaltyProgramDetailsScreen() {
   }, []);
 
   const bgColor =
-    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : jarsBackground;
+    colorTemp === 'warm' ? '#FAF8F4' : colorTemp === 'cool' ? '#F7F9FA' : brandBackground;
   const points = loyalty?.points ?? 0;
   const target = 140;
   const pointsAway = Math.max(0, target - points);
@@ -62,23 +62,23 @@ export default function LoyaltyProgramDetailsScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]}>
       {/* Header */}
-      <View style={[styles.header, { borderBottomColor: jarsSecondary }]}>
+      <View style={[styles.header, { borderBottomColor: brandSecondary }]}>
         <Pressable onPress={handleBack}>
-          <ChevronLeft color={jarsPrimary} size={24} />
+          <ChevronLeft color={brandPrimary} size={24} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: jarsPrimary }]}>Loyalty Program</Text>
+        <Text style={[styles.headerTitle, { color: brandPrimary }]}>Loyalty Program</Text>
         <View style={{ width: 24 }} />
       </View>
 
       {/* Content */}
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={[styles.points, { color: jarsPrimary }]}>{points} points</Text>
-        <Text style={[styles.description, { color: jarsPrimary }]}>
+        <Text style={[styles.points, { color: brandPrimary }]}>{points} points</Text>
+        <Text style={[styles.description, { color: brandPrimary }]}>
           You’re only {pointsAway} points away from your next reward!
         </Text>
         <PointsProgressBar current={points} target={target} />
         <Pressable
-          style={[styles.button, { backgroundColor: jarsSecondary }]}
+          style={[styles.button, { backgroundColor: brandSecondary }]}
           onPress={() => {
             hapticLight();
             LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);

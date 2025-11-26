@@ -1,11 +1,11 @@
 {
-  "name": "jars-cannabis-mobile-app",
+  "name": "nimbus-cannabis-mobile",
   "version": "1.0.0",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
-      "name": "jars-cannabis-mobile-app",
+      "name": "nimbus-cannabis-mobile",
       "version": "1.0.0",
       "hasInstallScript": true,
       "dependencies": {
@@ -4671,6 +4671,8 @@
     },
     "node_modules/@expo/config-plugins": {
       "version": "7.9.2",
+      "resolved": "https://registry.npmjs.org/@expo/config-plugins/-/config-plugins-7.9.2.tgz",
+      "integrity": "sha512-sRU/OAp7kJxrCUiCTUZqvPMKPdiN1oTmNfnbkG4oPdfWQTpid3jyCH7ZxJEN5SI6jrY/ZsK5B/JPgjDUhuWLBQ==",
       "license": "MIT",
       "dependencies": {
         "@expo/config-types": "^50.0.0-alpha.1",
@@ -35717,21 +35719,6 @@
         "picomatch": {
           "optional": true
         }
-      }
-    },
-    "node_modules/tinyglobby/node_modules/picomatch": {
-      "version": "4.0.3",
-      "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-4.0.3.tgz",
-      "integrity": "sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q==",
-      "dev": true,
-      "license": "MIT",
-      "optional": true,
-      "peer": true,
-      "engines": {
-        "node": ">=12"
-      },
-      "funding": {
-        "url": "https://github.com/sponsors/jonschlinkert"
       }
     },
     "node_modules/tmp": {

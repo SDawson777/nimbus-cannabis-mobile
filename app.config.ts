@@ -59,8 +59,8 @@ function resolveIOSGoogleServicesFile(): string {
 }
 
 const config: ExpoConfig = {
-  name: 'JARS',
-  slug: 'jars-cannabis-mobile-app',
+  name: 'Nimbus Cannabis OS',
+  slug: 'nimbus-cannabis-mobile',
   // Manual app versioning (controlled instead of EAS autoIncrement)
   version: '1.0.0',
   extra: {
@@ -69,7 +69,7 @@ const config: ExpoConfig = {
     },
   },
   ios: {
-    bundleIdentifier: 'com.jarss.dev',
+    bundleIdentifier: 'com.nimbus.cannabis.dev',
     // iOS build number should match or be incremented per release
     buildNumber: '1.0.0',
     // Firebase iOS config: path to GoogleService-Info.plist
@@ -77,17 +77,17 @@ const config: ExpoConfig = {
     googleServicesFile: resolveIOSGoogleServicesFile(),
   },
   android: {
-    package: 'com.jars.dev.android',
+    package: 'com.nimbus.cannabis.dev.android',
     // Increment versionCode with each release
     versionCode: 1,
     // Firebase Android config: path to google-services.json
     // Replace the placeholder file with the real one from Firebase when available
     googleServicesFile: resolveAndroidGoogleServicesFile(),
   },
+  icon: './assets/nimbus/nimbus-icon.png',
   splash: {
     backgroundColor: '#F9F9F9',
-    // Use a known-good PNG from assets/textures to avoid prebuild CRC errors
-    image: './assets/textures/paper_noise_tile.png',
+    image: './assets/nimbus/nimbus-splash.png',
     resizeMode: 'contain',
   },
   plugins: [
@@ -119,11 +119,11 @@ const config: ExpoConfig = {
     bundler: 'webpack',
   },
   // Comprehensive deep linking configuration
-  scheme: 'jars',
+  scheme: 'nimbus',
   platforms: ['ios', 'android', 'web'],
   // Enhanced linking configuration covering all app flows
   linking: {
-    prefixes: ['jars://', 'https://jars.app/', 'https://www.jars.app/'],
+    prefixes: ['nimbus://', 'https://nimbus.app/', 'https://www.nimbus.app/'],
     config: {
       screens: {
         // Onboarding & Auth flows
@@ -184,10 +184,10 @@ const config: ExpoConfig = {
         DataTransparency: 'transparency',
         PrivacyIntelligence: 'privacy-intelligence',
 
-        // JARS specific flows
-        MyJars: 'jars',
-        JournalEntry: 'jars/journal/:itemId',
-        MyJarsInsights: 'jars/insights',
+        // Journal & Stash specific flows
+        MyJars: 'stash',
+        JournalEntry: 'stash/journal/:itemId',
+        MyJarsInsights: 'stash/insights',
         Awards: 'awards',
         EthicalAIDashboard: 'ethical-ai',
 

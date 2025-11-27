@@ -9,7 +9,7 @@
       "distribution": "internal",
       "node": "20.19.4",
       "env": {
-        "EXPO_PUBLIC_API_BASE_URL": "https://jars-cannabis-mobile-app-production.up.railway.app"
+        "EXPO_PUBLIC_API_BASE_URL": "https://nimbus-cannabis-mobile-production.up.railway.app"
       }
     },
     "android-preview": {
@@ -21,7 +21,7 @@
       "node": "20.19.4",
       "env": {
         "NODE_ENV": "production",
-        "EXPO_PUBLIC_API_BASE_URL": "https://jars-cannabis-mobile-app-production.up.railway.app"
+        "EXPO_PUBLIC_API_BASE_URL": "https://nimbus-cannabis-mobile-production.up.railway.app"
       }
     },
     "ios-simulator": {
@@ -31,7 +31,7 @@
       "distribution": "internal",
       "node": "20.19.4",
       "env": {
-        "EXPO_PUBLIC_API_BASE_URL": "https://jars-cannabis-mobile-app-production.up.railway.app"
+        "EXPO_PUBLIC_API_BASE_URL": "https://nimbus-cannabis-mobile-production.up.railway.app"
       }
     },
     "production": {
@@ -43,7 +43,7 @@
       "node": "20.19.4",
       "env": {
         "NODE_ENV": "production",
-        "EXPO_PUBLIC_API_BASE_URL": "https://jars-cannabis-mobile-app-production.up.railway.app"
+        "EXPO_PUBLIC_API_BASE_URL": "https://nimbus-cannabis-mobile-production.up.railway.app"
       }
     }
   },

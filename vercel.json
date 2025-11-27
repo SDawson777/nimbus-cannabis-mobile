@@ -7,7 +7,7 @@
   "rewrites": [
     {
       "source": "/api/v1/(.*)",
-      "destination": "https://api.jarscannabis.com/api/v1/$1"
+      "destination": "https://api.nimbuscannabis.com/api/v1/$1"
     }
   ]
 }

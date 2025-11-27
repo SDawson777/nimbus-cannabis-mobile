@@ -1,6 +1,6 @@
 # Nimbus Cannabis OS Mobile
 
-[![CI](https://github.com/SDAWSON777/jars-cannabis-mobile-app/actions/workflows/ci.yml/badge.svg)](https://github.com/SDAWSON777/jars-cannabis-mobile-app/actions)
+[![CI](https://github.com/SDawson777/nimbus-cannabis-mobile/actions/workflows/ci.yml/badge.svg)](https://github.com/SDawson777/nimbus-cannabis-mobile/actions)
 
 A premium white-label React Native mobile platform for cannabis retailers, designed to deliver an award-winning, legally compliant, and highly personalized cannabis shopping experience.
 

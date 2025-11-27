@@ -110,7 +110,7 @@ ${
 http://localhost:3000
 
 🌐 Production Demo:
-https://jars-cannabis-mobile-app-production.up.railway.app
+https://nimbus-cannabis-mobile-production.up.railway.app
 
 📧 Demo Credentials:
 • buyer@demo.com / password123

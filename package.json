@@ -8,7 +8,7 @@
     "build:ios": "eas build --platform ios --profile ios-simulator --clear-cache",
     "build:android:clean": "npm run clean:modules && npm ci && eas build --platform android --profile android-preview --clear-cache",
     "build:ios:clean": "npm run clean:modules && npm ci && eas build --platform ios --profile ios-simulator --clear-cache",
-    "demo:web": "cross-env VITE_API_BASE_URL=https://jars-cannabis-mobile-app-production.up.railway.app/api/v1 npm --prefix apps/demo-web run dev",
+    "demo:web": "cross-env VITE_API_BASE_URL=https://nimbus-cannabis-mobile-production.up.railway.app/api/v1 npm --prefix apps/demo-web run dev",
     "clean:modules": "rm -rf node_modules package-lock.json && npm cache verify",
     "fix:deps": "bash scripts/fix-dependencies.sh",
     "prepare": "sh -c 'if [ -n \"$CI\" ]; then exit 0; fi; if [ -x ./node_modules/.bin/husky ]; then ./node_modules/.bin/husky install; fi'",
